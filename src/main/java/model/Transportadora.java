@@ -1,5 +1,48 @@
 package model;
 
-public class Transportadora {
 
+import java.io.Serializable;
+
+public class Transportadora implements Serializable {
+    private String id;
+    private  String nome;
+    private   String contacto;
+
+    public Transportadora(String id, String nome, String contacto) {
+        this.id = id;
+        this.nome = nome;
+        this.contacto = contacto;
+    }
+
+    public Transportadora(String nome, String contacto) {
+        this.nome = nome;
+        this.contacto = contacto;
+    }
+
+    public Transportadora() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(String contacto) {
+        this.contacto = contacto;
+    }
 }
