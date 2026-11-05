@@ -108,88 +108,149 @@ public class ListaDuplamenteLigada <T> implements ListaDuplamenteLigada1<T>{
 
     @Override
     public T removerInicio() {
-        if (inicio==null) {
+        if (inicio==null)
             return  null;
-        }else {
-            if (tamanho == 0){
+
+        T elemento= inicio.getValor();
+        if (tamanho == 0){
                 inicio = null;
                 fim = null;
-        }else
-
-
-
-
+        }else {
+            inicio = inicio.getPosterior();
+            inicio.setAnterior(null);
             tamanho--;
         }
+        return elemento;
     }
 
     @Override
     public T removerFim() {
-        return null;
+        if (inicio==null)
+            return  null;
+        T elemento= fim.getValor();
+        if (tamanho == 0) {
+            inicio = null;
+            fim = null;
+        }else {
+            fim = fim.getAnterior();
+            fim.setPosterior(null);
+            tamanho--;
+        }
+        return  elemento;
     }
 
     @Override
     public T remover(int posicao) {
-        return null;
+        No<T> atual=inicio;
+        if ((posicao<0)||(posicao>=tamanho))
+            throw new IndexOutOfBoundsException();
+        if (posicao == tamanho-1)
+            return removerFim();
+        else
+            if (posicao==0)
+                return removerInicio();
+            else {
+                for (int i = 0; i < posicao; i++) {
+                    atual=atual.getPosterior();
+                }
+                T elemento=atual.getValor();
+                No<T> posteiror=atual.getPosterior();
+                No<T> anterior=atual.getAnterior();
+                posteiror.setAnterior(anterior);
+                anterior.setPosterior(posteiror);
+                tamanho--;
+                return elemento;
+            }
+
+
     }
 
     @Override
     public T pesquisar(T t) {
+
+        No<T> atual = inicio;
+
+        while (atual != null) {
+
+            if (atual.getValor().equals(t)) {
+                return atual.getValor();
+            }
+
+            atual = atual.getPosterior();
+        }
+
         return null;
     }
 
     @Override
     public T obter(int posicao) {
-        return null;
+        No<T> atual=inicio;
+        if ((posicao<0)||(posicao>tamanho))
+            throw new IndexOutOfBoundsException();
+        if (posicao == tamanho)
+            return fim.getValor();
+        else
+            if (posicao==0)
+                return inicio.getValor();
+            else  {
+                for (int i = 0; i < posicao; i++) {
+                    atual=atual.getPosterior();
+                }
+                return  atual.getValor();
+            }
+
     }
 
     @Override
     public boolean contem(T t) {
-        return false;
+        return pesquisar(t)!=null;
     }
 
-    @Override
-    public void percorrerInicio() {
-
-    }
-
-    @Override
-    public void percorrerFim() {
-
-    }
-
-    @Override
-    public T primeiro() {
-        return null;
-    }
-
-    @Override
-    public T ultimo() {
-        return null;
-    }
-
-    @Override
-    public int tamanho() {
-        return 0;
-    }
 
     @Override
     public boolean estaVazia() {
-        return false;
+        return  inicio==null;
     }
 
     @Override
     public void actualizar(int posicao, T t) {
-
+        No<T> atual=inicio;
+        if ((posicao<0)||(posicao>tamanho))
+            throw new IndexOutOfBoundsException();
+        if (posicao == tamanho)
+           fim.setValor(t);
+        else
+        if (posicao==0)
+            inicio.setValor(t);
+        else {
+            for (int i = 0; i < posicao; i++) {
+                atual = atual.getPosterior();
+            }
+            atual.setValor(t);
+        }
     }
 
     @Override
     public void inverter() {
-
+        No<T> atual=inicio;
+        No<T> temporario=null;
+        while (atual!=null) {
+            temporario=atual.getAnterior();
+            atual.setAnterior(atual.getPosterior());
+            atual.setPosterior(temporario);
+            atual=atual.getAnterior();
+        }
+        temporario=inicio;
+        inicio=fim;
+        fim=temporario;
     }
 
     @Override
     public void limpar() {
-
+        inicio=null;
+        fim=null;
+        tamanho=0;
     }
 }
+
+

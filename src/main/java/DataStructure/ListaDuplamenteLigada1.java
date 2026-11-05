@@ -13,11 +13,6 @@ public interface ListaDuplamenteLigada1 <T> {
     T pesquisar(T t);
     T obter(int posicao);
     boolean contem(T t);
-    void percorrerInicio();
-    void percorrerFim() ;
-    T primeiro();
-    T ultimo();
-    int tamanho();
     boolean estaVazia();
     void actualizar(int posicao, T t);
     void inverter();
