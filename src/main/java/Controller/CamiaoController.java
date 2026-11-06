@@ -24,6 +24,8 @@ public class CamiaoController implements controller<Camiao> {
 
     @Override
     public ListaDuplamenteLigada<Camiao> listar() {
+        
+        return null;
     }
 
     @Override

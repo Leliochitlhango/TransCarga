@@ -3,6 +3,7 @@ package model;
 import java.io.Serializable;
 
 public class Camiao extends veiculo implements Serializable {
+
     private String numeroEixos;
     private String tipoMercadoria;
 
