@@ -1,32 +1,32 @@
 package model;
 
-public class Propietario {
-    private String id;
+public class Proprietario {
+    private int id;
     private  String nome;
     private  int contacto;
     private int numeroDocumentoIdentificacao;
 
-    public Propietario(String id, String nome, int contacto, int numeroDocumentoIdentificacao) {
+    public Proprietario(int id, String nome, int contacto, int numeroDocumentoIdentificacao) {
         this.id = id;
         this.nome = nome;
         this.contacto = contacto;
         this.numeroDocumentoIdentificacao = numeroDocumentoIdentificacao;
     }
 
-    public Propietario(String nome, int contacto, int numeroDocumentoIdentificacao) {
+    public Proprietario(String nome, int contacto, int numeroDocumentoIdentificacao) {
         this.nome = nome;
         this.contacto = contacto;
         this.numeroDocumentoIdentificacao = numeroDocumentoIdentificacao;
     }
 
-    public Propietario() {
+    public Proprietario() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

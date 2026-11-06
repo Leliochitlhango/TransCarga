@@ -1,18 +1,19 @@
 package model;
 
-import java.io.Serializable;
 
-public class Carrinha extends veiculo implements Serializable {
+
+public class Carrinha extends Veiculo {
+    
     private int passageiros;
     private String TipCarroceria;
 
-    public Carrinha(String matricula, String id, int contacto, int documentoIdentifcacao, int passageiros) {
-        super(matricula, id, contacto, documentoIdentifcacao);
+    public Carrinha(String matricula, int id, int contacto, int documentoIdentifcacao, int passageiros) {
+        this.matricula = matricula;
+        this.id = id;
         this.passageiros = passageiros;
     }
 
     public Carrinha(String matricula, int contacto, int documentoIdentifcacao, int passageiros) {
-        super(matricula, contacto, documentoIdentifcacao);
         this.passageiros = passageiros;
     }
 

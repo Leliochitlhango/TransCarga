@@ -1,17 +1,17 @@
 package model;
 
-public class mercadoria {
+public class Mercadoria {
     private String id;
     private String Descricao;
     private int quantidade;
 
-    public mercadoria(String id, String descricao, int quantidade) {
+    public Mercadoria(String id, String descricao, int quantidade) {
         this.id = id;
         Descricao = descricao;
         this.quantidade = quantidade;
     }
 
-    public mercadoria() {
+    public Mercadoria() {
     }
 
     public String getId() {

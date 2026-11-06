@@ -1,29 +1,36 @@
 package model;
 
 import java.util.Objects;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
-public class cliente {
-    private String id;
+
+public class Cliente {
+    
+    private int id;
     private  String nome;
     private int contacto;
     private String endereco;
 
 
-    public cliente(String id, String nome, int contacto, String endereco) {
+    public Cliente(int id, String nome, int contacto, String endereco) {
         this.id = id;
         this.nome = nome;
         this.contacto = contacto;
         this.endereco = endereco;
     }
 
-    public cliente() {
+    public Cliente() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -54,7 +61,7 @@ public class cliente {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        cliente cliente = (cliente) o;
+        Cliente cliente = (Cliente) o;
         return Objects.equals(getId(), cliente.getId());
     }
 
