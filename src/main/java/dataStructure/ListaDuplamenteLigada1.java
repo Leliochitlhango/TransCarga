@@ -1,4 +1,4 @@
-package DataStructure;
+package dataStructure;
 
 public interface ListaDuplamenteLigada1 <T> {
     void inserirInicio(T t);

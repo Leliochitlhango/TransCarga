@@ -1,6 +1,6 @@
-package Controller;
+package controller;
 
-import DataStructure.ListaDuplamenteLigada;
+import dataStructure.ListaDuplamenteLigada;
 
 public interface controller <T>{
     void registar(T t);

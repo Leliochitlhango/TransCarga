@@ -1,20 +1,26 @@
 package model;
 
-import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-public class Camiao extends veiculo implements Serializable {
+@Entity
+@Table(name = "camioes")
+public class Camiao extends Veiculo {
 
+    @Column(nullable = false)
     private String numeroEixos;
+    
+    @Column(nullable = false, length=20)
     private String tipoMercadoria;
+    
 
     public Camiao(String matricula, String id, int contacto, int documentoIdentifcacao, String numeroEixos, String tipoMercadoria) {
-        super(matricula, id, contacto, documentoIdentifcacao);
         this.numeroEixos = numeroEixos;
         this.tipoMercadoria = tipoMercadoria;
     }
 
     public Camiao(String matricula, int contacto, int documentoIdentifcacao, String numeroEixos, String tipoMercadoria) {
-        super(matricula, contacto, documentoIdentifcacao);
         this.numeroEixos = numeroEixos;
         this.tipoMercadoria = tipoMercadoria;
     }

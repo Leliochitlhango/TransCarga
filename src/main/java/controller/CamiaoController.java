@@ -1,6 +1,6 @@
-package Controller;
+package controller;
 
-import DataStructure.ListaDuplamenteLigada;
+import dataStructure.ListaDuplamenteLigada;
 import model.Camiao;
 
 public class CamiaoController implements controller<Camiao> {
