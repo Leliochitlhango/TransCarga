@@ -28,7 +28,7 @@ public class Carregamento {
     private String localOrigem;
     
     @Column(nullable = false)
-    private LocalDate Data;
+    private LocalDate data;
     
     @Column(nullable = false)
     private double valorCobrado;
@@ -45,7 +45,7 @@ public class Carregamento {
         this.id = id;
         this.veiculo = veiculo;
         this.localOrigem = localOrigem;
-        Data = data;
+        this.data = data;
         this.valorCobrado = valorCobrado;
         LocaDestino = locaDestino;
         this.cliente = cliente;
@@ -87,11 +87,11 @@ public class Carregamento {
     }
 
     public LocalDate getData() {
-        return Data;
+        return data;
     }
 
     public void setData(LocalDate data) {
-        Data = data;
+        this.data = data;
     }
 
     public double getValorCobrado() {
@@ -128,7 +128,7 @@ public class Carregamento {
                 "id='" + id + '\'' +
                 ", veiculo=" + veiculo +
                 ", localOrigem='" + localOrigem + '\'' +
-                ", Data=" + Data +
+                ", Data=" + data +
                 ", valorCobrado=" + valorCobrado +
                 ", LocaDestino='" + LocaDestino + '\'' +
                 '}';
