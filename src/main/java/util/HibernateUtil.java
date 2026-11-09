@@ -40,7 +40,7 @@ public class HibernateUtil {
 
             config.setProperty(
                     "hibernate.connection.url",
-                    "jdbc:mysql://localhost:3307/petromoz"
+                    "jdbc:mysql://localhost:3307/transcarga"
             );
 
             config.setProperty(
@@ -72,7 +72,13 @@ public class HibernateUtil {
                     "true"
             );
 
-            //config.addAnnotatedClass(Abastecimento.class);
+            config.addAnnotatedClass(Camiao.class);
+            config.addAnnotatedClass(Carregamento.class);
+            config.addAnnotatedClass(Carrinha.class);
+            config.addAnnotatedClass(Cliente.class);
+            config.addAnnotatedClass(Mercadoria.class);
+            config.addAnnotatedClass(Proprietario.class);
+            config.addAnnotatedClass(Veiculo.class);
             
 
             return config.buildSessionFactory();
