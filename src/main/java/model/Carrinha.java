@@ -1,42 +1,39 @@
 package model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "carrinhas")
+@DiscriminatorValue("CARRINHA")
 public class Carrinha extends Veiculo {
-    
-    @Column(nullable = true)
-    private int passageiros;
-    
-    @Column(nullable = true)
-    private String TipCarroceria;
 
-    public Carrinha(String matricula, int id, int documentoIdentifcacao, int passageiros) {
+    @Column(name = "passageiros")
+    private Integer passageiros;
+
+    @Column(name = "tipo_carroceria")
+    private String tipoCarroceria;
+
+    public Carrinha() {
+    }
+
+    public Carrinha(String matricula, String documentoIdentifcacao, Integer passageiros) {
         this.matricula = matricula;
-        this.id = id;
+        this.documentoIdentifcacao = documentoIdentifcacao;
         this.passageiros = passageiros;
     }
 
-    public Carrinha() {
-            
+    public String getTipoCarroceria() {
+        return tipoCarroceria;
     }
 
-    public String getTipCarroceria() {
-        return TipCarroceria;
+    public void setTipoCarroceria(String tipoCarroceria) {
+        this.tipoCarroceria = tipoCarroceria;
     }
 
-    public void setTipCarroceria(String tipCarroceria) {
-        TipCarroceria = tipCarroceria;
-    }
-
-    public int getPassageiros() {
+    public Integer getPassageiros() {
         return passageiros;
     }
 
-    public void setPassageiros(int passageiros) {
+    public void setPassageiros(Integer passageiros) {
         this.passageiros = passageiros;
     }
 }

@@ -1,31 +1,24 @@
 package model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "camioes")
+@DiscriminatorValue("CAMIAO")
 public class Camiao extends Veiculo {
 
-    @Column(nullable = false)
+    @Column(name = "numero_eixos")
     private String numeroEixos;
-    
-    @Column(nullable = false, length=20)
+
+    @Column(name = "tipo_mercadoria", length = 20)
     private String tipoMercadoria;
-    
 
-    public Camiao(String matricula, String id, int contacto, int documentoIdentifcacao, String numeroEixos, String tipoMercadoria) {
-        this.numeroEixos = numeroEixos;
-        this.tipoMercadoria = tipoMercadoria;
+    public Camiao() {
     }
 
-    public Camiao(String matricula, int contacto, int documentoIdentifcacao, String numeroEixos, String tipoMercadoria) {
-        this.numeroEixos = numeroEixos;
-        this.tipoMercadoria = tipoMercadoria;
-    }
-
-    public Camiao(String numeroEixos, String tipoMercadoria) {
+    public Camiao(String matricula, String documentoIdentifcacao,
+                  String numeroEixos, String tipoMercadoria) {
+        this.matricula = matricula;
+        this.documentoIdentifcacao = documentoIdentifcacao;
         this.numeroEixos = numeroEixos;
         this.tipoMercadoria = tipoMercadoria;
     }

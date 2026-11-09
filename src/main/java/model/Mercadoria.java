@@ -14,7 +14,7 @@ public class Mercadoria {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private int id;
     
     @Column(nullable=false, length=100)
     private String Descricao;
@@ -22,7 +22,7 @@ public class Mercadoria {
     @Column(nullable=false)
     private int quantidade;
 
-    public Mercadoria(String id, String descricao, int quantidade) {
+    public Mercadoria(int id, String descricao, int quantidade) {
         this.id = id;
         Descricao = descricao;
         this.quantidade = quantidade;
@@ -31,11 +31,11 @@ public class Mercadoria {
     public Mercadoria() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
