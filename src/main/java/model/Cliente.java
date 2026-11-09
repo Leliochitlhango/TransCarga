@@ -3,20 +3,30 @@ package model;
 import java.util.Objects;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
-
+@Entity
+@Table(name = "clientes")
 public class Cliente {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    
+    @Column(nullable=false, length=50)
     private  String nome;
-    private int contacto;
+    
+    @Column(nullable=false, length=15)
+    private String contacto;
+    
+    @Column(nullable=false, length=100)
     private String endereco;
 
 
-    public Cliente(int id, String nome, int contacto, String endereco) {
+    public Cliente(int id, String nome, String contacto, String endereco) {
         this.id = id;
         this.nome = nome;
         this.contacto = contacto;
@@ -42,11 +52,11 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public int getContacto() {
+    public String getContacto() {
         return contacto;
     }
 
-    public void setContacto(int contacto) {
+    public void setContacto(String contacto) {
         this.contacto = contacto;
     }
 
