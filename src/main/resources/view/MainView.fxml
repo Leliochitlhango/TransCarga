@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="720.0" prefWidth="1180.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainViewController">
+   <top>
+      <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="barra-topo">
+         <padding>
+            <Insets bottom="14.0" left="20.0" right="20.0" top="14.0" />
+         </padding>
+         <children>
+            <Label styleClass="titulo-app" text="TransCarga Moçambique" />
+            <Label styleClass="subtitulo-app" text="Gestão de transporte e distribuição de mercadorias" />
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox prefWidth="230.0" spacing="4.0" styleClass="menu-lateral">
+         <padding>
+            <Insets bottom="16.0" left="12.0" right="12.0" top="16.0" />
+         </padding>
+         <children>
+            <Label styleClass="menu-secao" text="CADASTROS" />
+            <Button fx:id="btnProprietarios" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarProprietarios" styleClass="menu-item" text="Proprietários" />
+            <Button fx:id="btnVeiculos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVeiculos" styleClass="menu-item" text="Veículos" />
+            <Button fx:id="btnClientes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarClientes" styleClass="menu-item" text="Clientes" />
+            <Separator />
+            <Label styleClass="menu-secao" text="FROTA" />
+            <Button fx:id="btnCamioes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCamioes" styleClass="menu-item" text="Listar camiões" />
+            <Button fx:id="btnCarrinhas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCarrinhas" styleClass="menu-item" text="Listar carrinhas" />
+            <Separator />
+            <Label styleClass="menu-secao" text="TRANSPORTES" />
+            <Button fx:id="btnNovoCarregamento" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarNovoCarregamento" styleClass="menu-item" text="Registar carregamento" />
+            <Button fx:id="btnCarregamentos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCarregamentos" styleClass="menu-item" text="Listar carregamentos" />
+            <Button fx:id="btnPorProprietario" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarPorProprietario" styleClass="menu-item" text="Por proprietário" />
+            <Button fx:id="btnTotalVeiculo" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarTotalVeiculo" styleClass="menu-item" text="Total por veículo" />
+            <Separator />
+            <Button fx:id="btnSair" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#sair" styleClass="menu-sair" text="Sair" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <StackPane fx:id="areaConteudo" styleClass="area-conteudo" stylesheets="@../css/styles.css" />
+   </center>
+</BorderPane>

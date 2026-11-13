@@ -1,0 +1,30 @@
+.root { -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; -fx-font-size: 13px; -fx-base: #f4f6f8; }
+
+.barra-topo { -fx-background-color: #14365d; }
+.titulo-app { -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; }
+.subtitulo-app { -fx-text-fill: #a9c1de; -fx-font-size: 12px; }
+
+.menu-lateral { -fx-background-color: #1d4b7e; }
+.menu-secao { -fx-text-fill: #8fb0d6; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 8 0 2 4; }
+.menu-item { -fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-padding: 8 10; -fx-cursor: hand; }
+.menu-item:hover { -fx-background-color: #2a649f; }
+.menu-item.activo { -fx-background-color: #f5a623; -fx-text-fill: #14365d; -fx-font-weight: bold; }
+.menu-sair { -fx-background-color: #b3392f; -fx-text-fill: white; -fx-padding: 8 10; -fx-cursor: hand; }
+
+.area-conteudo { -fx-background-color: #eef1f5; }
+.tela { -fx-background-color: #eef1f5; }
+.titulo-tela { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #14365d; }
+.cartao { -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #dbe2ea; -fx-border-radius: 8; }
+.destaque { -fx-font-weight: bold; -fx-text-fill: #1d4b7e; }
+.mensagem { -fx-text-fill: #b3392f; -fx-font-weight: bold; }
+.mensagem.sucesso { -fx-text-fill: #2e7d32; }
+.rodape-total { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #14365d; }
+
+.btn-primario { -fx-background-color: #1d4b7e; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 7 16; -fx-background-radius: 6; -fx-cursor: hand; }
+.btn-primario:hover { -fx-background-color: #2a649f; }
+.btn-secundario { -fx-background-color: #f5a623; -fx-text-fill: #14365d; -fx-font-weight: bold; -fx-padding: 7 16; -fx-background-radius: 6; -fx-cursor: hand; }
+.btn-neutro { -fx-background-color: #d9e0e8; -fx-text-fill: #14365d; -fx-padding: 7 16; -fx-background-radius: 6; -fx-cursor: hand; }
+
+.indicador { -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #dbe2ea; -fx-border-radius: 8; }
+.indicador-rotulo { -fx-text-fill: #6b7c93; -fx-font-size: 12px; }
+.indicador-valor { -fx-text-fill: #14365d; -fx-font-size: 26px; -fx-font-weight: bold; }

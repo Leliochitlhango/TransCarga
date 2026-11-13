@@ -1,6 +1,8 @@
 
 package dao;
 
+import dataStructure.ListaDuplamenteLigada;
+import java.util.ArrayList;
 import java.util.List;
 import model.Proprietario;
 import org.hibernate.Session;
@@ -45,12 +47,23 @@ public class ProprietarioDAO {
         }
     }
     
-    public List<Proprietario> findAll() {
+    public ListaDuplamenteLigada<Proprietario> findAll() {
+        
+        ListaDuplamenteLigada<Proprietario> lista = new ListaDuplamenteLigada<>();
+        
+        List<Proprietario> listaAuxiliar = new ArrayList<>();
+        
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
+            listaAuxiliar = session.createQuery(
                     "FROM Proprietario ORDER BY nome",
                     Proprietario.class
             ).getResultList();
+            
+            for (Proprietario p: listaAuxiliar) {
+                lista.inserirFim(p);
+            }
+            
+            return lista;
         } catch (Exception e) {
             throw e;
         }
