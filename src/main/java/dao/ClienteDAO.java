@@ -1,0 +1,106 @@
+package dao;
+
+import dataStructure.ListaDuplamenteLigada;
+import java.util.List;
+import model.Cliente;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import util.HibernateUtil;
+
+/**
+ *
+ * @author julius
+ */
+public class ClienteDAO {
+
+    public boolean save(Cliente cliente) {
+        Transaction transaction = null;
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            transaction = session.beginTransaction();
+
+            session.persist(cliente);
+
+            transaction.commit();
+
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
+
+    public Cliente findById(int id) {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            Cliente cliente = session.find(Cliente.class, id);
+
+            return cliente;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public ListaDuplamenteLigada<Cliente> findAll() {
+        ListaDuplamenteLigada<Cliente> lista = new ListaDuplamenteLigada<Cliente>();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<Cliente> clientes = session.createQuery(
+                    "FROM Cliente ORDER BY nome",
+                    Cliente.class
+            ).getResultList();
+            for (Cliente c : clientes) {
+                lista.inserirFim(c);
+            }
+            return lista;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public boolean update(Cliente cliente) {
+        Transaction transaction = null;
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            session.merge(cliente);
+
+            transaction.commit();
+
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+
+    }
+
+    public boolean remove(Cliente cliente) {
+
+        Transaction transaction = null;
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            transaction = session.beginTransaction();
+
+            session.remove(cliente);
+
+            transaction.commit();
+
+            return true;
+
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+
+    }
+}

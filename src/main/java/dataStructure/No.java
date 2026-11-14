@@ -1,4 +1,4 @@
-package DataStructure;
+package dataStructure;
 
 public class No <T>{
     private T valor;

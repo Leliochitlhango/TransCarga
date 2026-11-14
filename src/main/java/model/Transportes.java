@@ -3,23 +3,23 @@ package model;
 
 import java.io.Serializable;
 
-public class Transportadora implements Serializable {
+public class Transportes implements Serializable {
     private String id;
     private  String nome;
     private   String contacto;
 
-    public Transportadora(String id, String nome, String contacto) {
+    public Transportes(String id, String nome, String contacto) {
         this.id = id;
         this.nome = nome;
         this.contacto = contacto;
     }
 
-    public Transportadora(String nome, String contacto) {
+    public Transportes(String nome, String contacto) {
         this.nome = nome;
         this.contacto = contacto;
     }
 
-    public Transportadora() {
+    public Transportes() {
     }
 
     public String getId() {

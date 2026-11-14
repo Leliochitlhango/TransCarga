@@ -1,24 +1,24 @@
 package model;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 
-public class Camiao extends veiculo implements Serializable {
+@Entity
+@DiscriminatorValue("CAMIAO")
+public class Camiao extends Veiculo {
+
+    @Column(name = "numero_eixos")
     private String numeroEixos;
+
+    @Column(name = "tipo_mercadoria", length = 20)
     private String tipoMercadoria;
 
-    public Camiao(String matricula, String id, int contacto, int documentoIdentifcacao, String numeroEixos, String tipoMercadoria) {
-        super(matricula, id, contacto, documentoIdentifcacao);
-        this.numeroEixos = numeroEixos;
-        this.tipoMercadoria = tipoMercadoria;
+    public Camiao() {
     }
 
-    public Camiao(String matricula, int contacto, int documentoIdentifcacao, String numeroEixos, String tipoMercadoria) {
-        super(matricula, contacto, documentoIdentifcacao);
-        this.numeroEixos = numeroEixos;
-        this.tipoMercadoria = tipoMercadoria;
-    }
-
-    public Camiao(String numeroEixos, String tipoMercadoria) {
+    public Camiao(String matricula, String documentoIdentifcacao,
+                  String numeroEixos, String tipoMercadoria) {
+        this.matricula = matricula;
+        this.documentoIdentifcacao = documentoIdentifcacao;
         this.numeroEixos = numeroEixos;
         this.tipoMercadoria = tipoMercadoria;
     }
@@ -38,4 +38,5 @@ public class Camiao extends veiculo implements Serializable {
     public void setTipoMercadoria(String tipoMercadoria) {
         this.tipoMercadoria = tipoMercadoria;
     }
+    
 }
