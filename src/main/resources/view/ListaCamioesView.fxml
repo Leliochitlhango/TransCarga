@@ -15,9 +15,9 @@
       <Label styleClass="titulo-tela" text="Camiões — ordem crescente de capacidade de carga" />
       <TableView fx:id="tabela" VBox.vgrow="ALWAYS">
          <columns>
-            <TableColumn fx:id="colMatricula" prefWidth="130.0" text="Matrícula" />
-            <TableColumn fx:id="colMarca" prefWidth="140.0" text="Marca" />
-            <TableColumn fx:id="colModelo" prefWidth="140.0" text="Modelo" />
+            <TableColumn fx:id="colDocIdenticacao" prefWidth="130.0" text="DOC. Identificação" />
+            <TableColumn fx:id="colMatricula" prefWidth="140.0" text="Matricula" />
+            <TableColumn fx:id="colMercadoria" prefWidth="140.0" text="Tipo Mercadoria" />
             <TableColumn fx:id="colCapacidade" prefWidth="140.0" text="Capacidade (ton)" />
             <TableColumn fx:id="colProprietario" prefWidth="240.0" text="Proprietário" />
          </columns>
@@ -27,7 +27,7 @@
       </TableView>
       <HBox alignment="CENTER_RIGHT">
          <children>
-            <Label fx:id="lblTotal" styleClass="rodape-total" text="Total: 0 camiões" />
+            <Label fx:id="lblTotal" prefHeight="20.0" prefWidth="176.0" styleClass="rodape-total" text="Total: 0 camiões" />
          </children>
       </HBox>
    </children>

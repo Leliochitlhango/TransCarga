@@ -37,7 +37,7 @@
                   <DatePicker fx:id="dpData" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
                   <Label text="Veículo" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="cbVeiculo" maxWidth="1.7976931348623157E308" promptText="Seleccione o veículo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="cbVeiculo" maxWidth="1.7976931348623157E308" onAction="#veiculoSelecionado" promptText="Seleccione o veículo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label text="Proprietário" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <TextField fx:id="txtProprietario" editable="false" focusTraversable="false" promptText="Preenchido automaticamente" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
@@ -53,6 +53,8 @@
 
                   <Label text="Valor cobrado (MZN)" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                   <TextField fx:id="txtValor" promptText="Ex.: 15000" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label prefHeight="18.0" prefWidth="115.0" text="Tipo do Veiculo" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <TextField fx:id="txtTipoVeiculo" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                </children>
                <rowConstraints>
                   <RowConstraints />

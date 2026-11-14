@@ -41,18 +41,19 @@ public class MainViewController {
     @FXML
     private Button btnVeiculos;
 
-    private List<Button> botoesMenu;
+    //private List<Button> botoesMenu;
 
     @FXML
     public void initialize(URL location, java.util.ResourceBundle resources) {
-        botoesMenu = List.of(
-                btnProprietarios, btnVeiculos, btnClientes,
-                btnCamioes, btnCarrinhas,
-                btnNovoCarregamento, btnCarregamentos,
-                btnPorProprietario, btnTotalVeiculo
-        );
+//        botoesMenu = List.of(
+//                btnProprietarios, btnVeiculos, btnClientes,
+//                btnCamioes, btnCarrinhas,
+//                btnNovoCarregamento, btnCarregamentos,
+//                btnPorProprietario, btnTotalVeiculo
+//        );
 
-        // Tela inicial
+
+// Tela inicial
         mostrarProprietarios();
     }
 
@@ -73,7 +74,7 @@ public class MainViewController {
 
     @FXML
     void mostrarClientes() {
-        abrirTela("ListaCamioesView.fxml", btnCamioes);
+        abrirTela("ClienteView.fxml", btnCamioes);
     }
 
     @FXML
@@ -115,7 +116,7 @@ public class MainViewController {
             }
             Node tela = FXMLLoader.load(url);
             areaConteudo.getChildren().setAll(tela);
-            marcarBotaoActivo(botaoActivo);
+            //marcarBotaoActivo(botaoActivo);
         } catch (IOException e) {
             e.printStackTrace();
             Alert alerta = new Alert(Alert.AlertType.ERROR,
@@ -125,10 +126,10 @@ public class MainViewController {
         }
     }
 
-    private void marcarBotaoActivo(Button activo) {
-        for (Button b : botoesMenu) {
-            b.getStyleClass().remove("activo");
-        }
-        activo.getStyleClass().add("activo");
-    }
+//    private void marcarBotaoActivo(Button activo) {
+//        for (Button b : botoesMenu) {
+//            b.getStyleClass().remove("activo");
+//        }
+//        activo.getStyleClass().add("activo");
+//    }
 }

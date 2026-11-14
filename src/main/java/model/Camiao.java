@@ -38,4 +38,5 @@ public class Camiao extends Veiculo {
     public void setTipoMercadoria(String tipoMercadoria) {
         this.tipoMercadoria = tipoMercadoria;
     }
+    
 }

@@ -72,4 +72,9 @@ public class Proprietario {
     public void setNumeroDocumentoIdentificacao(String numeroDocumentoIdentificacao) {
         this.numeroDocumentoIdentificacao = numeroDocumentoIdentificacao;
     }
+    
+    @Override
+    public String toString() {
+        return this.nome;
+    }
 }

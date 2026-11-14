@@ -52,7 +52,7 @@
             </HBox>
          </children>
       </VBox>
-      <TableView fx:id="tabela" VBox.vgrow="ALWAYS">
+      <TableView fx:id="tabela" onKeyPressed="#deletarItem" onMouseClicked="#selecionarItem" VBox.vgrow="ALWAYS">
          <columns>
             <TableColumn fx:id="colNome" prefWidth="260.0" text="Nome" />
             <TableColumn fx:id="colContacto" prefWidth="180.0" text="Contacto" />

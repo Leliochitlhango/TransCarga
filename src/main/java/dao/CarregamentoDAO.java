@@ -1,6 +1,7 @@
 
 package dao;
 
+import dataStructure.ListaDuplamenteLigada;
 import java.util.List;
 import model.Carregamento;
 import org.hibernate.Session;
@@ -45,12 +46,17 @@ public class CarregamentoDAO {
         }
     }
     
-    public List<Carregamento> findAll() {
+    public ListaDuplamenteLigada<Carregamento> findAll() {
+        ListaDuplamenteLigada<Carregamento> lista = new ListaDuplamenteLigada<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
+            List<Carregamento> carregamentos =  session.createQuery(
                     "FROM Carregamento ORDER BY data",
                     Carregamento.class
             ).getResultList();
+            for (Carregamento c: carregamentos) {
+                lista.inserirFim(c);
+            }
+            return lista;
         } catch (Exception e) {
             throw e;
         }

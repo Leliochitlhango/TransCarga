@@ -64,4 +64,9 @@ public abstract class Veiculo {
     public Proprietario getProprietario() {
         return proprietario;
     }
+    
+    @Override
+    public String toString() {
+        return this.matricula;
+    }
 }

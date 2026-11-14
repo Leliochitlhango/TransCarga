@@ -33,12 +33,17 @@ public class Carregamento {
     @Column(nullable = false)
     private double valorCobrado;
     
+    @Column(nullable = false)
+    private double quantidade;
+    
     @Column(nullable = false, length=100)
-    private String LocaDestino;
+    private String locaDestino;
     
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+    
+   
 
 
     public Carregamento(int id, Veiculo veiculo, String localOrigem, LocalDate data, double valorCobrado, String locaDestino, Cliente cliente) {
@@ -47,7 +52,7 @@ public class Carregamento {
         this.localOrigem = localOrigem;
         this.data = data;
         this.valorCobrado = valorCobrado;
-        LocaDestino = locaDestino;
+        this.locaDestino = locaDestino;
         this.cliente = cliente;
     }
 
@@ -103,13 +108,24 @@ public class Carregamento {
     }
 
     public String getLocaDestino() {
-        return LocaDestino;
+        return this.locaDestino;
     }
-
+    
     public void setLocaDestino(String locaDestino) {
-        LocaDestino = locaDestino;
+        this.locaDestino = locaDestino;
+    }
+    public Double getQuantidade() {
+        return quantidade;
     }
 
+    public void setQuantidade(Double quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public String getProprietario() {
+        return this.veiculo.getProprietario().getNome();
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -130,7 +146,7 @@ public class Carregamento {
                 ", localOrigem='" + localOrigem + '\'' +
                 ", Data=" + data +
                 ", valorCobrado=" + valorCobrado +
-                ", LocaDestino='" + LocaDestino + '\'' +
+                ", LocaDestino='" + locaDestino + '\'' +
                 '}';
     }
 }
