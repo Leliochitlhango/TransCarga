@@ -33,7 +33,7 @@
                <VBox spacing="6.0">
                   <children>
                      <Label styleClass="form-label" text="Proprietário" />
-                     <ComboBox fx:id="cbProprietario" maxWidth="1.7976931348623157E308" promptText="Seleccione o proprietário" />
+                     <ComboBox fx:id="cbProprietario" maxWidth="1.7976931348623157E308" onAction="#proprietarioSelecionado" promptText="Seleccione o proprietário" />
                   </children>
                </VBox>
 
@@ -44,7 +44,6 @@
                      <TableColumn fx:id="colCliente" prefWidth="150.0" text="Cliente" />
                      <TableColumn fx:id="colDestino" prefWidth="130.0" text="Destino" />
                      <TableColumn fx:id="colValor" prefWidth="110.0" text="Valor (MZN)" />
-                     <!-- Colunas de compatibilidade invisíveis ou disponíveis -->
                      <TableColumn fx:id="colQuantidade" prefWidth="0.0" text="Qtd" visible="false" />
                      <TableColumn fx:id="colOrigem" prefWidth="0.0" text="Origem" visible="false" />
                   </columns>
@@ -56,8 +55,8 @@
                <!-- Rodapé com Badge de Serviços e Subtotal -->
                <HBox alignment="CENTER_LEFT" spacing="12.0">
                   <children>
-                     <Label fx:id="lblNumServicos" styleClass="pilula, pilula-verde" text="2 serviços" />
-                     <Label fx:id="lblTotal" style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Subtotal: 117 000 MZN" />
+                     <Label fx:id="lblNumServicos" styleClass="pilula, pilula-verde" text="0 serviços" />
+                     <Label fx:id="lblTotal" style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Subtotal: 0,00 MZN" />
                      <Label fx:id="lblMensagem" styleClass="mensagem-erro" />
                   </children>
                </HBox>
@@ -72,20 +71,20 @@
                <VBox spacing="6.0">
                   <children>
                      <Label styleClass="form-label" text="Veículo" />
-                     <ComboBox maxWidth="1.7976931348623157E308" promptText="Seleccione o veículo" />
+                     <ComboBox fx:id="cbVeiculoConsulta" maxWidth="1.7976931348623157E308" onAction="#veiculoSelecionado" promptText="Seleccione o veículo" />
                   </children>
                </VBox>
 
                <!-- Destaque de Valor Arrecadado -->
                <VBox spacing="2.0">
                   <children>
-                     <Label styleClass="kpi-valor" text="520 000 MZN" />
-                     <Label styleClass="texto-suave" text="14 serviços realizados" />
+                     <Label fx:id="lblTotalVeiculoValor" styleClass="kpi-valor" text="0,00 MZN" />
+                     <Label fx:id="lblTotalVeiculoServicos" styleClass="texto-suave" text="0 serviços realizados" />
                   </children>
                </VBox>
 
                <!-- Mini Gráfico de Barras por Meses -->
-               <BarChart legendVisible="false" prefHeight="220.0" VBox.vgrow="ALWAYS">
+               <BarChart fx:id="graficoVeiculo" legendVisible="false" prefHeight="220.0" VBox.vgrow="ALWAYS">
                   <xAxis>
                      <CategoryAxis side="BOTTOM" />
                   </xAxis>

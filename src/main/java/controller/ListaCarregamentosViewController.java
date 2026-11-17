@@ -1,9 +1,10 @@
 package controller;
 
 import dao.CarregamentoDAO;
-import dao.ClienteDAO;
 import dataStructure.ListaDuplamenteLigada;
 import java.time.LocalDate;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,66 +13,66 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Carregamento;
-import model.Cliente;
 
 public class ListaCarregamentosViewController {
 
     private final ObservableList<Carregamento> dados = FXCollections.observableArrayList();
-    private final ListaDuplamenteLigada<Carregamento> carregamentos = new CarregamentoDAO().findAll();
+    private ListaDuplamenteLigada<Carregamento> carregamentos;
 
-    @FXML
-    private TableColumn<Carregamento, String> colCliente;
+    @FXML private TableColumn<Carregamento, String> colCliente;
+    @FXML private TableColumn<Carregamento, LocalDate> colData;
+    @FXML private TableColumn<Carregamento, String> colDestino;
+    @FXML private TableColumn<Carregamento, String> colOrigem;
+    @FXML private TableColumn<Carregamento, String> colProprietario;
+    @FXML private TableColumn<Carregamento, Double> colQuantidade;
+    @FXML private TableColumn<Carregamento, Double> colValor;
+    @FXML private TableColumn<Carregamento, String> colVeiculo;
 
-    @FXML
-    private TableColumn<Carregamento, LocalDate> colData;
+    @FXML private Label lblNumServicos;
+    @FXML private Label lblTotalGeral;
 
-    @FXML
-    private TableColumn<Carregamento, String> colDestino;
-
-    @FXML
-    private TableColumn<Carregamento, String> colOrigem;
-
-    @FXML
-    private TableColumn<Carregamento, String> colProprietario;
-
-    @FXML
-    private TableColumn<Carregamento, Double> colQuantidade;
-
-    @FXML
-    private TableColumn<Carregamento, Double> colValor;
-
-    @FXML
-    private TableColumn<Carregamento, String> colVeiculo;
-
-    @FXML
-    private Label lblNumServicos;
-
-    @FXML
-    private Label lblTotalGeral;
-
-    @FXML
-    private TableView<Carregamento> tabela;
-
-    Double valorTotal=0.0;
-    int servicos = 0;
+    @FXML private TableView<Carregamento> tabela;
 
     @FXML
     public void initialize() {
+        carregarDados();
         preencherTabela();
+    }
 
-        for (Carregamento c: carregamentos) {
-            valorTotal += c.getValorCobrado();
+    private void carregarDados() {
+        try {
+            carregamentos = new CarregamentoDAO().findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        
-        lblTotalGeral.setText(String.valueOf("Total Arrecadado: "+valorTotal+"MT"));
-        lblNumServicos.setText(String.valueOf("Servicos: "+carregamentos.getTamanho()));
+
+        double valorTotal = 0.0;
+        int totalServicos = 0;
+
+        if (carregamentos != null) {
+            totalServicos = carregamentos.getTamanho();
+            for (Carregamento c : carregamentos) {
+                if (c != null) valorTotal += c.getValorCobrado();
+            }
+        }
+
+        if (lblTotalGeral != null) {
+            lblTotalGeral.setText(String.format("Total Arrecadado: %.2f MZN", valorTotal));
+        }
+        if (lblNumServicos != null) {
+            lblNumServicos.setText("Serviços: " + totalServicos);
+        }
     }
 
     private void preencherTabela() {
-        colData.setCellValueFactory(new PropertyValueFactory<>("data"));
-        colCliente.setCellValueFactory(new PropertyValueFactory<>("cliente"));
-        colVeiculo.setCellValueFactory(new PropertyValueFactory<>("veiculo"));
-        colProprietario.setCellValueFactory(new PropertyValueFactory<>("proprietario"));
+        colData.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().getData()));
+        colCliente.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getCliente() != null ? c.getValue().getCliente().getNome() : ""));
+        colVeiculo.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getVeiculo() != null ? c.getValue().getVeiculo().getMatricula() : ""));
+        colProprietario.setCellValueFactory(c -> new SimpleStringProperty(
+                (c.getValue().getVeiculo() != null && c.getValue().getVeiculo().getProprietario() != null)
+                        ? c.getValue().getVeiculo().getProprietario().getNome() : ""));
         colQuantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
         colOrigem.setCellValueFactory(new PropertyValueFactory<>("localOrigem"));
         colDestino.setCellValueFactory(new PropertyValueFactory<>("locaDestino"));
@@ -80,9 +81,10 @@ public class ListaCarregamentosViewController {
         tabela.setItems(dados);
         dados.clear();
 
-        for (Carregamento c : carregamentos) {
-            dados.add(c);
+        if (carregamentos != null) {
+            for (Carregamento c : carregamentos) {
+                if (c != null) dados.add(c);
+            }
         }
     }
-
 }

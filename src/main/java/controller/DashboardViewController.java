@@ -6,31 +6,104 @@ import dao.CarregamentoDAO;
 import dao.ClienteDAO;
 import dao.ProprietarioDAO;
 import dataStructure.ListaDuplamenteLigada;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import model.Camiao;
 import model.Carrinha;
 import model.Carregamento;
 import model.Cliente;
 import model.Proprietario;
+import model.Veiculo;
 
 public class DashboardViewController {
 
     @FXML private Label lblVeiculos;
     @FXML private Label lblVeiculosRodape;
     @FXML private Label lblProprietarios;
+    @FXML private Label lblProprietariosRodape;
     @FXML private Label lblClientes;
+    @FXML private Label lblClientesRodape;
     @FXML private Label lblCarregamentos;
+    @FXML private Label lblCarregamentosRodape;
     @FXML private Label lblCargaTransportada;
+    @FXML private Label lblCargaRodape;
     @FXML private Label lblArrecadado;
+    @FXML private Label lblArrecadadoRodape;
+
+    @FXML private Label lblVeiculoMesMatricula;
+    @FXML private Label lblVeiculoMesDetalhes;
+    @FXML private Label lblVeiculoMesReceita;
+
     @FXML private BarChart<String, Number> graficoCarregamentos;
+    @FXML private DatePicker dpCalendario;
+    @FXML private Label lblDataSelecionada;
+    @FXML private Label lblResumoData;
+
+    private ListaDuplamenteLigada<Carregamento> todosCarregamentos;
 
     @FXML
     public void initialize() {
         carregarEstatisticas();
         carregarGrafico();
+        configurarDatePicker();
+    }
+
+    private void configurarDatePicker() {
+        if (dpCalendario != null) {
+            dpCalendario.setValue(LocalDate.now());
+            filtrarPorData(null);
+        }
+    }
+
+    @FXML
+    void filtrarPorData(ActionEvent event) {
+        if (dpCalendario == null || lblDataSelecionada == null || lblResumoData == null) {
+            return;
+        }
+
+        LocalDate data = dpCalendario.getValue();
+        if (data == null) {
+            lblDataSelecionada.setText("Data seleccionada: Nenhuma");
+            lblResumoData.setText("Por favor, seleccione uma data válida.");
+            return;
+        }
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        lblDataSelecionada.setText("Data: " + data.format(fmt));
+
+        int qtdViagens = 0;
+        double totalToneladas = 0.0;
+        double totalValor = 0.0;
+
+        if (todosCarregamentos != null) {
+            for (Carregamento c : todosCarregamentos) {
+                if (c != null && data.equals(c.getData())) {
+                    qtdViagens++;
+                    qtdViagensTotal(c);
+                    totalToneladas += c.getQuantidade();
+                    totalValor += c.getValorCobrado();
+                }
+            }
+        }
+
+        if (qtdViagens == 0) {
+            lblResumoData.setText("Nenhum carregamento realizado nesta data.");
+        } else {
+            lblResumoData.setText(String.format("%d viagem(ns) · %.1f t transportadas · %.2f MZN",
+                    qtdViagens, totalToneladas, totalValor));
+        }
+    }
+
+    private void qtdViagensTotal(Carregamento c) {
+        // Método auxiliar
     }
 
     private void carregarEstatisticas() {
@@ -39,78 +112,127 @@ public class DashboardViewController {
             ListaDuplamenteLigada<Carrinha> carrinhas = new CarrinhaDAO().findAll();
             ListaDuplamenteLigada<Proprietario> props = new ProprietarioDAO().findAll();
             ListaDuplamenteLigada<Cliente> clientes = new ClienteDAO().findAll();
-            ListaDuplamenteLigada<Carregamento> carregamentos = new CarregamentoDAO().findAll();
+            todosCarregamentos = new CarregamentoDAO().findAll();
 
             int totalCamioes = camioes != null ? camioes.getTamanho() : 0;
             int totalCarrinhas = carrinhas != null ? carrinhas.getTamanho() : 0;
             int totalVeiculos = totalCamioes + totalCarrinhas;
+            int totalProps = props != null ? props.getTamanho() : 0;
+            int totalCli = clientes != null ? clientes.getTamanho() : 0;
+            int totalCarreg = todosCarregamentos != null ? todosCarregamentos.getTamanho() : 0;
 
             if (lblVeiculos != null) {
-                lblVeiculos.setText(String.valueOf(totalVeiculos > 0 ? totalVeiculos : 18));
+                lblVeiculos.setText(String.valueOf(totalVeiculos));
             }
             if (lblVeiculosRodape != null) {
                 lblVeiculosRodape.setText(totalCamioes + " camiões · " + totalCarrinhas + " carrinhas");
             }
             if (lblProprietarios != null) {
-                lblProprietarios.setText(String.valueOf(props != null && props.getTamanho() > 0 ? props.getTamanho() : 12));
+                lblProprietarios.setText(String.valueOf(totalProps));
             }
             if (lblClientes != null) {
-                lblClientes.setText(String.valueOf(clientes != null && clientes.getTamanho() > 0 ? clientes.getTamanho() : 31));
+                lblClientes.setText(String.valueOf(totalCli));
             }
             if (lblCarregamentos != null) {
-                lblCarregamentos.setText(String.valueOf(carregamentos != null && carregamentos.getTamanho() > 0 ? carregamentos.getTamanho() : 42));
+                lblCarregamentos.setText(String.valueOf(totalCarreg));
             }
 
             double totalCarga = 0;
             double totalValor = 0;
-            if (carregamentos != null) {
-                for (Carregamento c : carregamentos) {
+
+            // Map para encontrar o veículo com maior faturamento
+            Map<String, Double> receitaPorVeiculo = new HashMap<>();
+            Map<String, Veiculo> objVeiculoPorMatricula = new HashMap<>();
+
+            if (todosCarregamentos != null) {
+                for (Carregamento c : todosCarregamentos) {
+                    if (c == null) continue;
                     totalCarga += c.getQuantidade();
                     totalValor += c.getValorCobrado();
+
+                    if (c.getVeiculo() != null && c.getVeiculo().getMatricula() != null) {
+                        String mat = c.getVeiculo().getMatricula();
+                        receitaPorVeiculo.put(mat, receitaPorVeiculo.getOrDefault(mat, 0.0) + c.getValorCobrado());
+                        objVeiculoPorMatricula.put(mat, c.getVeiculo());
+                    }
                 }
             }
 
             if (lblCargaTransportada != null) {
-                lblCargaTransportada.setText(totalCarga > 0 ? String.format("%.0f t", totalCarga) : "214 t");
+                lblCargaTransportada.setText(String.format("%.1f t", totalCarga));
             }
             if (lblArrecadado != null) {
-                lblArrecadado.setText(totalValor > 0 ? String.format("%.2f MZN", totalValor) : "1,25 M MZN");
+                lblArrecadado.setText(String.format("%.2f MZN", totalValor));
             }
+
+            // Veículo destaque (maior receita)
+            String melhorMatricula = null;
+            double maiorReceita = -1.0;
+            for (Map.Entry<String, Double> entry : receitaPorVeiculo.entrySet()) {
+                if (entry.getValue() > maiorReceita) {
+                    maiorReceita = entry.getValue();
+                    melhorMatricula = entry.getKey();
+                }
+            }
+
+            if (lblVeiculoMesMatricula != null && lblVeiculoMesDetalhes != null && lblVeiculoMesReceita != null) {
+                if (melhorMatricula != null) {
+                    Veiculo v = objVeiculoPorMatricula.get(melhorMatricula);
+                    lblVeiculoMesMatricula.setText(melhorMatricula);
+                    String propNome = (v != null && v.getProprietario() != null) ? v.getProprietario().getNome() : "Sem proprietário";
+                    String cap = (v != null) ? v.getCapacidadeCarga() + " t" : "";
+                    lblVeiculoMesDetalhes.setText(cap + " · " + propNome);
+                    lblVeiculoMesReceita.setText(String.format("Receita: %.2f MZN", maiorReceita));
+                } else {
+                    lblVeiculoMesMatricula.setText("—");
+                    lblVeiculoMesDetalhes.setText("Sem viagens registadas");
+                    lblVeiculoMesReceita.setText("0,00 MZN");
+                }
+            }
+
         } catch (Exception e) {
-            // Em caso de falha de conexão inicial ou banco vazio, mantém os valores da tela
+            e.printStackTrace();
         }
     }
 
     private void carregarGrafico() {
         if (graficoCarregamentos == null) return;
+        graficoCarregamentos.getData().clear();
 
         XYChart.Series<String, Number> serieCamioes = new XYChart.Series<>();
         serieCamioes.setName("Camiões");
-        serieCamioes.getData().add(new XYChart.Data<>("Jan", 15));
-        serieCamioes.getData().add(new XYChart.Data<>("Fev", 8));
-        serieCamioes.getData().add(new XYChart.Data<>("Mar", 22));
-        serieCamioes.getData().add(new XYChart.Data<>("Abr", 12));
-        serieCamioes.getData().add(new XYChart.Data<>("Mai", 16));
-        serieCamioes.getData().add(new XYChart.Data<>("Jun", 10));
-        serieCamioes.getData().add(new XYChart.Data<>("Jul", 25));
-        serieCamioes.getData().add(new XYChart.Data<>("Ago", 11));
-        serieCamioes.getData().add(new XYChart.Data<>("Set", 23));
-        serieCamioes.getData().add(new XYChart.Data<>("Out", 14));
-        serieCamioes.getData().add(new XYChart.Data<>("Nov", 9));
 
         XYChart.Series<String, Number> serieCarrinhas = new XYChart.Series<>();
         serieCarrinhas.setName("Carrinhas");
-        serieCarrinhas.getData().add(new XYChart.Data<>("Jan", 10));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Fev", 8));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Mar", 21));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Abr", 13));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Mai", 16));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Jun", 11));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Jul", 24));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Ago", 9));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Set", 21));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Out", 12));
-        serieCarrinhas.getData().add(new XYChart.Data<>("Nov", 8));
+
+        String[] meses = {"Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"};
+        int[] contagemCamioes = new int[12];
+        int[] contagemCarrinhas = new int[12];
+
+        if (todosCarregamentos != null) {
+            for (Carregamento c : todosCarregamentos) {
+                if (c != null && c.getData() != null) {
+                    int mesIdx = c.getData().getMonthValue() - 1; // 0..11
+                    if (mesIdx >= 0 && mesIdx < 12) {
+                        if (c.getVeiculo() instanceof Camiao) {
+                            contagemCamioes[mesIdx]++;
+                        } else if (c.getVeiculo() instanceof Carrinha) {
+                            contagemCarrinhas[mesIdx]++;
+                        } else {
+                            // Se o tipo base for genérico, contabiliza em camião
+                            contagemCamioes[mesIdx]++;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Adiciona apenas os meses do ano actual com valores reais (zero ou mais)
+        int mesAtual = LocalDate.now().getMonthValue();
+        for (int i = 0; i < mesAtual; i++) {
+            serieCamioes.getData().add(new XYChart.Data<>(meses[i], contagemCamioes[i]));
+            serieCarrinhas.getData().add(new XYChart.Data<>(meses[i], contagemCarrinhas[i]));
+        }
 
         graficoCarregamentos.getData().addAll(serieCamioes, serieCarrinhas);
     }

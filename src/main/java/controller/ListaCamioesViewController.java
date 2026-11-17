@@ -44,7 +44,8 @@ public class ListaCamioesViewController {
     @FXML 
     public void initialize() {
         preencherTabela();
-        lblTotal.setText(String.valueOf("Total de Camiões: "+camioes.getTamanho()));
+        int total = camioes != null ? camioes.getTamanho() : 0;
+        lblTotal.setText("Total de Camiões: " + total);
     }
     
     private void preencherTabela() {

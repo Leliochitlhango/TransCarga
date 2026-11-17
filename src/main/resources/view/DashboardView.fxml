@@ -5,7 +5,7 @@
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.XYChart?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
@@ -33,7 +33,7 @@
             <!-- Seção Superior: Veículo do Mês + Grade de KPIs -->
             <HBox spacing="18.0">
                <children>
-                  <!-- Card Veículo do Mês -->
+                  <!-- Card Veículo do Mês (Dinâmico) -->
                   <VBox alignment="CENTER" prefWidth="290.0" spacing="14.0" styleClass="card">
                      <padding>
                         <Insets bottom="24.0" left="20.0" right="20.0" top="20.0" />
@@ -49,9 +49,9 @@
                               </ImageView>
                            </children>
                         </StackPane>
-                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="ABC-123-MP" />
-                        <Label styleClass="texto-suave, texto-pequeno" text="Volvo FH · 20 t · Transportes Sul" textAlignment="CENTER" />
-                        <Label styleClass="texto-verde" style="-fx-font-weight: bold;" text="Receita 520 000 MZN" />
+                        <Label fx:id="lblVeiculoMesMatricula" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="—" />
+                        <Label fx:id="lblVeiculoMesDetalhes" styleClass="texto-suave, texto-pequeno" text="Sem viagens registadas" textAlignment="CENTER" wrapText="true" />
+                        <Label fx:id="lblVeiculoMesReceita" styleClass="texto-verde" style="-fx-font-weight: bold;" text="0,00 MZN" />
                      </children>
                   </VBox>
 
@@ -72,9 +72,9 @@
                            <children>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="lblVeiculos" styleClass="kpi-valor" text="18" />
+                                    <Label fx:id="lblVeiculos" styleClass="kpi-valor" text="0" />
                                     <Label styleClass="kpi-rotulo" text="Veículos" />
-                                    <Label fx:id="lblVeiculosRodape" styleClass="kpi-rodape" text="11 camiões · 7 carrinhas" />
+                                    <Label fx:id="lblVeiculosRodape" styleClass="kpi-rodape" text="0 camiões · 0 carrinhas" />
                                  </children>
                               </VBox>
                               <StackPane styleClass="kpi-icone">
@@ -94,9 +94,9 @@
                            <children>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="lblProprietarios" styleClass="kpi-valor" text="12" />
+                                    <Label fx:id="lblProprietarios" styleClass="kpi-valor" text="0" />
                                     <Label styleClass="kpi-rotulo" text="Proprietários" />
-                                    <Label styleClass="kpi-rodape" text="2 novos este mês" />
+                                    <Label fx:id="lblProprietariosRodape" styleClass="kpi-rodape" text="Cadastrados no sistema" />
                                  </children>
                               </VBox>
                               <StackPane styleClass="kpi-icone">
@@ -116,9 +116,9 @@
                            <children>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="lblClientes" styleClass="kpi-valor" text="31" />
+                                    <Label fx:id="lblClientes" styleClass="kpi-valor" text="0" />
                                     <Label styleClass="kpi-rotulo" text="Clientes" />
-                                    <Label styleClass="kpi-rodape" text="3 novos este mês" />
+                                    <Label fx:id="lblClientesRodape" styleClass="kpi-rodape" text="Activos no sistema" />
                                  </children>
                               </VBox>
                               <StackPane styleClass="kpi-icone">
@@ -138,9 +138,9 @@
                            <children>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="lblCarregamentos" styleClass="kpi-valor" text="42" />
+                                    <Label fx:id="lblCarregamentos" styleClass="kpi-valor" text="0" />
                                     <Label styleClass="kpi-rotulo" text="Carregamentos" />
-                                    <Label styleClass="kpi-rodape" text="No mês anterior: 38" />
+                                    <Label fx:id="lblCarregamentosRodape" styleClass="kpi-rodape" text="Total de viagens" />
                                  </children>
                               </VBox>
                               <StackPane styleClass="kpi-icone">
@@ -160,9 +160,9 @@
                            <children>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="lblCargaTransportada" styleClass="kpi-valor" text="214 t" />
+                                    <Label fx:id="lblCargaTransportada" styleClass="kpi-valor" text="0 t" />
                                     <Label styleClass="kpi-rotulo" text="Carga transportada" />
-                                    <Label styleClass="kpi-rodape" text="Capacidade usada: 78 %" />
+                                    <Label fx:id="lblCargaRodape" styleClass="kpi-rodape" text="Volume total acumulado" />
                                  </children>
                               </VBox>
                               <StackPane styleClass="kpi-icone">
@@ -182,14 +182,14 @@
                            <children>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="lblArrecadado" styleClass="kpi-valor" text="1,25 M MZN" />
+                                    <Label fx:id="lblArrecadado" styleClass="kpi-valor" text="0,00 MZN" />
                                     <Label styleClass="kpi-rotulo" text="Arrecadado" />
-                                    <Label styleClass="kpi-rodape" text="Mês anterior: 1,08 M" />
+                                    <Label fx:id="lblArrecadadoRodape" styleClass="kpi-rodape" text="Faturamento total" />
                                  </children>
                               </VBox>
                               <StackPane styleClass="kpi-icone">
                                  <children>
-                                    <Label style="-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;" text="\$" />
+                                    <Label style="-fx-font-size: 16px; -fx-text-fill: white; -fx-font-weight: bold;" text="MZN" />
                                  </children>
                               </StackPane>
                            </children>
@@ -199,7 +199,7 @@
                </children>
             </HBox>
 
-            <!-- Seção Inferior: Gráfico de Carregamentos + Calendário Novembro 2026 -->
+            <!-- Seção Inferior: Gráfico de Carregamentos + Calendário Interativo DatePicker -->
             <HBox spacing="18.0">
                <children>
                   <!-- Gráfico de Carregamentos por Mês -->
@@ -238,86 +238,30 @@
                      </children>
                   </VBox>
 
-                  <!-- Calendário do Mês (Novembro 2026) -->
-                  <VBox prefWidth="290.0" spacing="14.0" styleClass="card">
+                  <!-- Calendário Interativo com DatePicker -->
+                  <VBox prefWidth="320.0" spacing="16.0" styleClass="card">
                      <children>
                         <HBox alignment="CENTER_LEFT">
                            <children>
-                              <Label styleClass="card-titulo" text="Calendário" />
+                              <Label styleClass="card-titulo" text="Consultar por Data" />
                               <Pane HBox.hgrow="ALWAYS" />
-                              <Label styleClass="texto-suave, texto-pequeno" text="Novembro 2026" />
+                              <Label styleClass="texto-suave, texto-pequeno" text="Filtrar viagens" />
                            </children>
                         </HBox>
                         
-                        <!-- Grade de Dias da Semana -->
-                        <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
-                           <columnConstraints>
-                              <ColumnConstraints halignment="CENTER" prefWidth="30.0" />
-                              <ColumnConstraints halignment="CENTER" prefWidth="30.0" />
-                              <ColumnConstraints halignment="CENTER" prefWidth="30.0" />
-                              <ColumnConstraints halignment="CENTER" prefWidth="30.0" />
-                              <ColumnConstraints halignment="CENTER" prefWidth="30.0" />
-                              <ColumnConstraints halignment="CENTER" prefWidth="30.0" />
-                              <ColumnConstraints halignment="CENTER" prefWidth="30.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints prefHeight="24.0" />
-                              <RowConstraints prefHeight="24.0" />
-                              <RowConstraints prefHeight="24.0" />
-                              <RowConstraints prefHeight="24.0" />
-                              <RowConstraints prefHeight="24.0" />
-                              <RowConstraints prefHeight="24.0" />
-                           </rowConstraints>
+                        <VBox spacing="8.0">
                            <children>
-                              <Label styleClass="form-label" text="Do" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                              <Label styleClass="form-label" text="Se" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                              <Label styleClass="form-label" text="Te" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                              <Label styleClass="form-label" text="Qu" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                              <Label styleClass="form-label" text="Qu" GridPane.columnIndex="4" GridPane.rowIndex="0" />
-                              <Label styleClass="form-label" text="Se" GridPane.columnIndex="5" GridPane.rowIndex="0" />
-                              <Label styleClass="form-label" text="Sá" GridPane.columnIndex="6" GridPane.rowIndex="0" />
-
-                              <!-- Linha 1 -->
-                              <Label styleClass="texto-suave" text="1" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                              <Label styleClass="texto-suave" text="2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label styleClass="texto-suave" text="3" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                              <Label styleClass="texto-suave" text="4" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                              <Label styleClass="texto-suave" text="5" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                              <Label styleClass="texto-suave" text="6" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                              <Label styleClass="texto-suave" text="7" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-
-                              <!-- Linha 2 -->
-                              <Label styleClass="texto-suave" text="8" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                              <Label styleClass="texto-suave" text="9" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label styleClass="texto-suave" text="10" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                              <Label styleClass="texto-suave" text="11" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                              <Label styleClass="texto-suave" text="12" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-                              <Label styleClass="texto-suave" text="13" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                              <Label styleClass="texto-suave" text="14" GridPane.columnIndex="6" GridPane.rowIndex="2" />
-
-                              <!-- Linha 3 com dia 17 destacado em verde -->
-                              <Label styleClass="texto-suave" text="15" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                              <Label styleClass="texto-suave" text="16" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label alignment="CENTER" prefHeight="26.0" prefWidth="26.0" style="-fx-background-color: #00A85A; -fx-background-radius: 13; -fx-text-fill: white; -fx-font-weight: bold;" text="17" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                              <Label styleClass="texto-suave" text="18" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                              <Label styleClass="texto-suave" text="19" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-                              <Label styleClass="texto-suave" text="20" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-                              <Label styleClass="texto-suave" text="21" GridPane.columnIndex="6" GridPane.rowIndex="3" />
-
-                              <!-- Linha 4 -->
-                              <Label styleClass="texto-suave" text="22" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                              <Label styleClass="texto-suave" text="23" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label styleClass="texto-suave" text="24" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                              <Label styleClass="texto-suave" text="25" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                              <Label styleClass="texto-suave" text="26" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                              <Label styleClass="texto-suave" text="27" GridPane.columnIndex="5" GridPane.rowIndex="4" />
-                              <Label styleClass="texto-suave" text="28" GridPane.columnIndex="6" GridPane.rowIndex="4" />
-
-                              <!-- Linha 5 -->
-                              <Label styleClass="texto-suave" text="29" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                              <Label styleClass="texto-suave" text="30" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Label styleClass="form-label" text="Seleccionar data válida:" />
+                              <DatePicker fx:id="dpCalendario" maxWidth="1.7976931348623157E308" onAction="#filtrarPorData" promptText="Escolha uma data..." />
                            </children>
-                        </GridPane>
+                        </VBox>
+
+                        <VBox spacing="10.0" style="-fx-background-color: -cor-fundo; -fx-background-radius: 8; -fx-padding: 12;">
+                           <children>
+                              <Label fx:id="lblDataSelecionada" styleClass="texto-verde" style="-fx-font-weight: bold;" text="Data seleccionada: Nenhuma" />
+                              <Label fx:id="lblResumoData" styleClass="texto-suave, texto-pequeno" text="Seleccione uma data no calendário acima para visualizar as viagens realizadas e o total transportado." wrapText="true" />
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
                </children>

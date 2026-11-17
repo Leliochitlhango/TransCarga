@@ -137,17 +137,17 @@
                   <!-- Anel de Progresso Circular -->
                   <StackPane prefHeight="150.0" prefWidth="150.0">
                      <children>
-                        <ProgressIndicator progress="0.6" styleClass="capacidade-ok" style="-fx-pref-width: 130px; -fx-pref-height: 130px;" />
+                        <ProgressIndicator fx:id="piCapacidade" progress="0.0" styleClass="capacidade-ok" style="-fx-pref-width: 130px; -fx-pref-height: 130px;" />
                         <VBox alignment="CENTER" spacing="2.0">
                            <children>
-                              <Label fx:id="lblCapacidade" styleClass="kpi-valor" style="-fx-font-size: 26px;" text="20" />
+                              <Label fx:id="lblCapacidade" styleClass="kpi-valor" style="-fx-font-size: 26px;" text="0" />
                               <Label styleClass="texto-suave, texto-pequeno" text="Capacidade máx. (t)" />
                            </children>
                         </VBox>
                      </children>
                   </StackPane>
 
-                  <Label styleClass="pilula, pilula-verde" text="Dentro da capacidade" />
+                  <Label fx:id="lblStatusCapacidade" styleClass="pilula, pilula-verde" text="Aguardando dados" />
                   
                   <Label alignment="CENTER" styleClass="texto-suave, texto-pequeno" text="Acima do limite, o anel fica vermelho e o botão Registar é bloqueado." textAlignment="CENTER" wrapText="true" />
 

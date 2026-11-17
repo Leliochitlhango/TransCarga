@@ -43,8 +43,22 @@ public class MainViewController {
     @FXML
     private Button btnVeiculos;
 
+    private List<Button> botoesMenu;
+
     @FXML
     public void initialize() {
+        botoesMenu = List.of(
+            btnDashboard,
+            btnProprietarios,
+            btnVeiculos,
+            btnClientes,
+            btnNovoCarregamento,
+            btnPorProprietario,
+            btnCarregamentos,
+            btnCamioes,
+            btnCarrinhas,
+            btnTotalVeiculo
+        );
         mostrarDashboard();
     }
 
@@ -75,7 +89,7 @@ public class MainViewController {
 
     @FXML
     void mostrarClientes() {
-        abrirTela("ClienteView.fxml", btnCamioes);
+        abrirTela("ClienteView.fxml", btnClientes);
     }
 
     @FXML
@@ -117,7 +131,7 @@ public class MainViewController {
             }
             Node tela = FXMLLoader.load(url);
             areaConteudo.getChildren().setAll(tela);
-            //marcarBotaoActivo(botaoActivo);
+            marcarBotaoActivo(botaoActivo);
         } catch (IOException e) {
             e.printStackTrace();
             Alert alerta = new Alert(Alert.AlertType.ERROR,
@@ -127,10 +141,15 @@ public class MainViewController {
         }
     }
 
-//    private void marcarBotaoActivo(Button activo) {
-//        for (Button b : botoesMenu) {
-//            b.getStyleClass().remove("activo");
-//        }
-//        activo.getStyleClass().add("activo");
-//    }
+    private void marcarBotaoActivo(Button activo) {
+        if (botoesMenu == null) return;
+        for (Button b : botoesMenu) {
+            if (b != null) {
+                b.getStyleClass().remove("item-menu-ativo");
+            }
+        }
+        if (activo != null && !activo.getStyleClass().contains("item-menu-ativo")) {
+            activo.getStyleClass().add("item-menu-ativo");
+        }
+    }
 }
