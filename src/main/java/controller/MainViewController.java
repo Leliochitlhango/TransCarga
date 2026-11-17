@@ -29,6 +29,8 @@ public class MainViewController {
     @FXML
     private Button btnClientes;
     @FXML
+    private Button btnDashboard;
+    @FXML
     private Button btnNovoCarregamento;
     @FXML
     private Button btnPorProprietario;
@@ -41,20 +43,19 @@ public class MainViewController {
     @FXML
     private Button btnVeiculos;
 
-    //private List<Button> botoesMenu;
+    @FXML
+    public void initialize() {
+        mostrarDashboard();
+    }
 
     @FXML
-    public void initialize(URL location, java.util.ResourceBundle resources) {
-//        botoesMenu = List.of(
-//                btnProprietarios, btnVeiculos, btnClientes,
-//                btnCamioes, btnCarrinhas,
-//                btnNovoCarregamento, btnCarregamentos,
-//                btnPorProprietario, btnTotalVeiculo
-//        );
+    void mostrarDashboard() {
+        abrirTela("DashboardView.fxml", btnDashboard);
+    }
 
-
-// Tela inicial
-        mostrarProprietarios();
+    @FXML
+    void mostrarConsultas() {
+        abrirTela("ConsultasView.fxml", btnPorProprietario);
     }
 
     @FXML

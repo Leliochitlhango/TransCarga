@@ -9,21 +9,21 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="16.0" styleClass="tela" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TransportesPorProprietarioController">
+<VBox spacing="16.0" styleClass="conteudo" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TransportesPorProprietarioController">
    <padding>
       <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
    </padding>
    <children>
-      <Label styleClass="titulo-tela" text="Transportes por proprietário" />
-      <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="cartao">
+      <Label styleClass="titulo-pagina" text="Transportes por proprietário" />
+      <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card">
          <padding>
             <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
          </padding>
          <children>
-            <Label text="Proprietário" />
+            <Label styleClass="form-label" text="Proprietário" />
             <ComboBox fx:id="cbProprietario" prefWidth="320.0" promptText="Seleccione o proprietário" />
             <Button fx:id="btnConsultar" mnemonicParsing="false" onAction="#consultar" styleClass="btn-primario" text="Consultar" />
-            <Label fx:id="lblMensagem" styleClass="mensagem" />
+            <Label fx:id="lblMensagem" styleClass="mensagem-erro" />
          </children>
       </HBox>
       <TableView fx:id="tabela" VBox.vgrow="ALWAYS">
@@ -42,8 +42,8 @@
       </TableView>
       <HBox alignment="CENTER_RIGHT" spacing="24.0">
          <children>
-            <Label fx:id="lblNumServicos" styleClass="rodape-total" text="Serviços: 0" />
-            <Label fx:id="lblTotal" styleClass="rodape-total" text="Total: 0,00 MZN" />
+            <Label fx:id="lblNumServicos" styleClass="card-destaque-titulo" text="Serviços: 0" />
+            <Label fx:id="lblTotal" styleClass="card-destaque-titulo" text="Total: 0,00 MZN" />
          </children>
       </HBox>
    </children>

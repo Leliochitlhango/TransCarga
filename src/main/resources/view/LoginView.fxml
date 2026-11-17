@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="700.0" prefWidth="950.0" styleClass="janela" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginViewController">
+   <children>
+      <VBox alignment="CENTER" maxWidth="450.0" spacing="24.0" styleClass="card">
+         <padding>
+            <Insets bottom="36.0" left="36.0" right="36.0" top="36.0" />
+         </padding>
+         <children>
+            <!-- Logo e Título da Empresa -->
+            <VBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <HBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <ImageView fitHeight="34.0" fitWidth="50.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/ded851f6070fc383c2e19e79619e0004.jpg" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="titulo-pagina" text="TransCarga" />
+                     </children>
+                  </HBox>
+                  <Label styleClass="subtitulo-pagina" text="Gestão e distribuição de mercadorias" />
+               </children>
+            </VBox>
+
+            <!-- Formulário de Login -->
+            <VBox spacing="14.0">
+               <children>
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label styleClass="form-label" text="Utilizador ou E-mail" />
+                        <TextField fx:id="txtUsuario" promptText="Ex.: lelio@transcarga.co.mz" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label styleClass="form-label" text="Palavra-passe" />
+                        <PasswordField fx:id="txtSenha" promptText="••••••••" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <CheckBox mnemonicParsing="false" text="Lembrar-me neste dispositivo" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="lblErro" styleClass="mensagem-erro" wrapText="true" />
+               </children>
+            </VBox>
+
+            <!-- Ações -->
+            <VBox spacing="12.0">
+               <children>
+                  <Button fx:id="btnEntrar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#entrar" styleClass="btn-primario" text="Iniciar Sessão" />
+               </children>
+            </VBox>
+
+            <!-- Rodapé informativo -->
+            <Label styleClass="texto-pequeno, texto-suave" text="© 2026 TransCarga Moçambique. Todos os direitos reservados." textAlignment="CENTER" wrapText="true" />
+         </children>
+      </VBox>
+   </children>
+</StackPane>

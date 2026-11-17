@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -9,41 +10,49 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="16.0" styleClass="tela" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TotalPorVeiculoViewController">
+<VBox spacing="16.0" styleClass="conteudo" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TotalPorVeiculoViewController">
    <padding>
       <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
    </padding>
    <children>
-      <Label styleClass="titulo-tela" text="Total arrecadado por veículo" />
-      <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="cartao">
+      <Label styleClass="titulo-pagina" text="Total arrecadado por veículo" />
+      <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card">
          <padding>
             <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
          </padding>
          <children>
-            <Label text="Veículo" />
+            <Label styleClass="form-label" text="Veículo" />
             <ComboBox fx:id="cbVeiculo" prefWidth="320.0" promptText="Seleccione o veículo" />
             <Button fx:id="btnConsultar" mnemonicParsing="false" onAction="#consultar" styleClass="btn-primario" text="Consultar" />
-            <Label fx:id="lblMensagem" styleClass="mensagem" />
+            <Label fx:id="lblMensagem" styleClass="mensagem-erro" />
          </children>
       </HBox>
       <HBox spacing="16.0">
          <children>
-            <VBox spacing="4.0" styleClass="indicador" HBox.hgrow="ALWAYS">
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <styleClass>
+                  <String fx:value="card" />
+                  <String fx:value="kpi" />
+               </styleClass>
                <padding>
                   <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
                </padding>
                <children>
-                  <Label styleClass="indicador-rotulo" text="Serviços realizados" />
-                  <Label fx:id="lblNumServicos" styleClass="indicador-valor" text="0" />
+                  <Label styleClass="kpi-rotulo" text="Serviços realizados" />
+                  <Label fx:id="lblNumServicos" styleClass="kpi-valor" text="0" />
                </children>
             </VBox>
-            <VBox spacing="4.0" styleClass="indicador" HBox.hgrow="ALWAYS">
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <styleClass>
+                  <String fx:value="card" />
+                  <String fx:value="kpi" />
+               </styleClass>
                <padding>
                   <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
                </padding>
                <children>
-                  <Label styleClass="indicador-rotulo" text="Total arrecadado" />
-                  <Label fx:id="lblTotal" styleClass="indicador-valor" text="0,00 MZN" />
+                  <Label styleClass="kpi-rotulo" text="Total arrecadado" />
+                  <Label fx:id="lblTotal" styleClass="kpi-valor" text="0,00 MZN" />
                </children>
             </VBox>
          </children>

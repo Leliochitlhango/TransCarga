@@ -40,7 +40,7 @@ public class HibernateUtil {
 
             config.setProperty(
                     "hibernate.connection.url",
-                    "jdbc:mysql://localhost:3307/transcarga"
+                    "jdbc:mysql://localhost:3306/transcarga"
             );
 
             config.setProperty(

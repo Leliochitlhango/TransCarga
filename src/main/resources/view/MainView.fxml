@@ -4,49 +4,185 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="720.0" prefWidth="1180.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainViewController">
+<BorderPane prefHeight="760.0" prefWidth="1280.0" styleClass="janela" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainViewController">
+   
+   <!-- BARRA SUPERIOR (HEADER) CONFORME MOCKUP FIGMA/PDF -->
    <top>
-      <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="barra-topo">
+      <HBox alignment="CENTER_LEFT" spacing="16.0">
          <padding>
-            <Insets bottom="14.0" left="20.0" right="20.0" top="14.0" />
+            <Insets bottom="14.0" left="20.0" right="24.0" top="14.0" />
          </padding>
          <children>
-            <Label styleClass="titulo-app" text="TransCarga Moçambique" />
-            <Label styleClass="subtitulo-app" text="Gestão de transporte e distribuição de mercadorias" />
+            <!-- Caixa de Pesquisa com visual arredondado e sombra -->
+            <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="caixa-pesquisa">
+               <children>
+                  <TextField maxWidth="1.7976931348623157E308" promptText="Pesquisar..." HBox.hgrow="ALWAYS" />
+                  <Label styleClass="texto-suave" text="🔍" />
+               </children>
+            </HBox>
+            
+            <Pane HBox.hgrow="ALWAYS" />
+            
+            <!-- Lado Direito: Idioma, Notificação e Perfil Usuário -->
+            <HBox alignment="CENTER" spacing="18.0">
+               <children>
+                  <Label styleClass="texto-suave" text="PT  ▾" />
+                  
+                  <StackPane styleClass="btn-icone-barra">
+                     <children>
+                        <Label style="-fx-font-size: 18px;" text="🔔" />
+                        <Label alignment="CENTER" styleClass="notificacao-contador" text="3" StackPane.alignment="TOP_RIGHT">
+                           <StackPane.margin>
+                              <Insets right="4.0" top="4.0" />
+                           </StackPane.margin>
+                        </Label>
+                     </children>
+                  </StackPane>
+                  
+                  <HBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <Label alignment="CENTER" styleClass="avatar" text="LF" />
+                        <Label style="-fx-font-weight: bold;" text="Lelio" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
          </children>
       </HBox>
    </top>
+
+   <!-- MENU LATERAL COM COLUNA DE ÍCONES + PAINEL DE NAVEGAÇÃO -->
    <left>
-      <VBox prefWidth="230.0" spacing="4.0" styleClass="menu-lateral">
-         <padding>
-            <Insets bottom="16.0" left="12.0" right="12.0" top="16.0" />
-         </padding>
+      <HBox>
          <children>
-            <Label styleClass="menu-secao" text="CADASTROS" />
-            <Button fx:id="btnProprietarios" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarProprietarios" styleClass="menu-item" text="Proprietários" />
-            <Button fx:id="btnVeiculos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVeiculos" styleClass="menu-item" text="Veículos" />
-            <Button fx:id="btnClientes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarClientes" styleClass="menu-item" text="Clientes" />
-            <Separator />
-            <Label styleClass="menu-secao" text="FROTA" />
-            <Button fx:id="btnCamioes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCamioes" styleClass="menu-item" text="Listar camiões" />
-            <Button fx:id="btnCarrinhas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCarrinhas" styleClass="menu-item" text="Listar carrinhas" />
-            <Separator />
-            <Label styleClass="menu-secao" text="TRANSPORTES" />
-            <Button fx:id="btnNovoCarregamento" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarNovoCarregamento" styleClass="menu-item" text="Registar carregamento" />
-            <Button fx:id="btnCarregamentos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCarregamentos" styleClass="menu-item" text="Listar carregamentos" />
-            <Button fx:id="btnPorProprietario" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarPorProprietario" styleClass="menu-item" text="Por proprietário" />
-            <Button fx:id="btnTotalVeiculo" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarTotalVeiculo" styleClass="menu-item" text="Total por veículo" />
-            <Separator />
-            <Button fx:id="btnSair" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#sair" styleClass="menu-sair" text="Sair" />
+            <!-- 1. Coluna Estreita de Ícones (Verde Escuro) -->
+            <VBox styleClass="barra-icones">
+               <children>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#mostrarDashboard" styleClass="icone-lateral">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/46342a34150bc95d84c81883d1ffdbbb.jpg" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#mostrarProprietarios" styleClass="icone-lateral">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/b548eae4e34db001b7805a90ee501ca3.jpg" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#mostrarVeiculos" styleClass="icone-lateral">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/ded851f6070fc383c2e19e79619e0004.jpg" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#mostrarClientes" styleClass="icone-lateral">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/n.jpg" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#mostrarNovoCarregamento" styleClass="icone-lateral">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/48600497fa4b3efc40f2cac2553ea204.jpg" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#mostrarCarregamentos" styleClass="icone-lateral">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/b5fe1e30301742e01e3ddb9df377ddbf.jpg" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+
+            <!-- 2. Painel de Menu Principal (Verde com Canto Inferior Arredondado) -->
+            <VBox styleClass="painel-menu">
+               <children>
+                  <!-- Logotipo da Aplicação -->
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <padding>
+                        <Insets bottom="16.0" left="4.0" right="10.0" top="4.0" />
+                     </padding>
+                     <children>
+                        <ImageView fitHeight="24.0" fitWidth="36.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Icones/ded851f6070fc383c2e19e79619e0004.jpg" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="logo-texto" text="TransCarga" />
+                     </children>
+                  </HBox>
+
+                  <Label styleClass="menu-titulo" text="Gestão" />
+                  
+                  <Button fx:id="btnDashboard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarDashboard" styleClass="item-menu" text="Dashboard" />
+                  <Button fx:id="btnProprietarios" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarProprietarios" styleClass="item-menu" text="Proprietários            ›" />
+                  <Button fx:id="btnVeiculos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVeiculos" styleClass="item-menu" text="Veículos                   ›" />
+                  <Button fx:id="btnClientes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarClientes" styleClass="item-menu" text="Clientes                    ›" />
+                  <Button fx:id="btnNovoCarregamento" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarNovoCarregamento" styleClass="item-menu" text="Carregamentos        ›" />
+                  <Button fx:id="btnPorProprietario" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarConsultas" styleClass="item-menu" text="Consultas" />
+                  <Button fx:id="btnCarregamentos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCarregamentos" styleClass="item-menu" text="Relatórios" />
+                  
+                  <!-- Atalhos compatíveis com os botões originais do controller -->
+                  <Separator opacity="0.3">
+                     <VBox.margin>
+                        <Insets bottom="6.0" top="6.0" />
+                     </VBox.margin>
+                  </Separator>
+                  
+                  <HBox spacing="6.0">
+                     <children>
+                        <Button fx:id="btnCamioes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCamioes" styleClass="item-menu" text="Camiões" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnCarrinhas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarCarrinhas" styleClass="item-menu" text="Carrinhas" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <Button fx:id="btnTotalVeiculo" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarTotalVeiculo" styleClass="item-menu" text="Total por Veículo" />
+                  
+                  <Pane VBox.vgrow="ALWAYS" />
+                  
+                  <!-- Botão Sair -->
+                  <Button fx:id="btnSair" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#sair" styleClass="btn-perigo" text="Sair do Sistema">
+                     <VBox.margin>
+                        <Insets right="14.0" top="10.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
          </children>
-      </VBox>
+      </HBox>
    </left>
+
+   <!-- ÁREA CENTRAL DE CONTEÚDO DINÂMICO -->
    <center>
-      <StackPane fx:id="areaConteudo" styleClass="area-conteudo" stylesheets="@../css/styles.css" />
+      <StackPane fx:id="areaConteudo" styleClass="conteudo" />
    </center>
 </BorderPane>
