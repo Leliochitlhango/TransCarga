@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -42,6 +43,8 @@ public class MainViewController {
     private Button btnTotalVeiculo;
     @FXML
     private Button btnVeiculos;
+    @FXML
+    private Button btnTema;
 
     private List<Button> botoesMenu;
 
@@ -60,6 +63,22 @@ public class MainViewController {
             btnTotalVeiculo
         );
         mostrarDashboard();
+        atualizarTextoBotaoTema();
+    }
+
+    @FXML
+    void alternarModoEscuro(ActionEvent event) {
+        Scene scene = btnTema != null && btnTema.getScene() != null ? btnTema.getScene() : areaConteudo.getScene();
+        if (scene == null) return;
+        LoginViewController.modoEscuroAtivo = !LoginViewController.modoEscuroAtivo;
+        LoginViewController.aplicarTema(scene, LoginViewController.modoEscuroAtivo);
+        atualizarTextoBotaoTema();
+    }
+
+    private void atualizarTextoBotaoTema() {
+        if (btnTema != null) {
+            btnTema.setText(LoginViewController.modoEscuroAtivo ? "☀️ Modo Claro" : "🌙 Modo Escuro");
+        }
     }
 
     @FXML

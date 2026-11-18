@@ -31,9 +31,11 @@
             
             <Pane HBox.hgrow="ALWAYS" />
             
-            <!-- Lado Direito: Idioma, Notificação e Perfil Usuário -->
-            <HBox alignment="CENTER" spacing="18.0">
+            <!-- Lado Direito: Idioma, Modo Escuro, Notificação e Perfil Usuário -->
+            <HBox alignment="CENTER" spacing="16.0">
                <children>
+                  <Button fx:id="btnTema" mnemonicParsing="false" onAction="#alternarModoEscuro" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 13px; -fx-font-weight: bold;" text="🌙 Modo Escuro" />
+                  
                   <Label styleClass="texto-suave" text="PT  ▾" />
                   
                   <StackPane styleClass="btn-icone-barra">

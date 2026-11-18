@@ -82,28 +82,21 @@ public class CamiaoDAO {
     }
     
     public boolean remove(Camiao camiao) {
-        
         Transaction transaction = null;
-        
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            
             transaction = session.beginTransaction();
-            
-            if (session.contains(camiao)) {
-                
-                session.remove(camiao);
-                
+            Camiao entity = session.find(Camiao.class, camiao.getId());
+            if (entity != null) {
+                session.remove(entity);
                 transaction.commit();
-                
                 return true;
             }
-            
+            if (transaction != null) transaction.rollback();
             return false;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             throw e;
         }
-        
     }
     
 }

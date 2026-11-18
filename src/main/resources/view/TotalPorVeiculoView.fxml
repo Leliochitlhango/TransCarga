@@ -7,33 +7,55 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="16.0" styleClass="conteudo" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TotalPorVeiculoViewController">
-   <padding>
-      <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
-   </padding>
+<VBox spacing="16.0" styleClass="conteudo" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TotalPorVeiculoViewController">
    <children>
-      <Label styleClass="titulo-pagina" text="Total arrecadado por veículo" />
+      <VBox spacing="4.0">
+         <children>
+            <Label styleClass="titulo-pagina" text="Relatórios: Total Arrecadado por Veículo" />
+            <Label styleClass="subtitulo-pagina" text="Faturamento e serviços por camiões e carrinhas · Exportação em CSV e PDF" />
+         </children>
+      </VBox>
+
+      <!-- Barra de Filtros, Pesquisa e Exportação -->
       <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card">
          <padding>
             <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
          </padding>
          <children>
-            <Label styleClass="form-label" text="Veículo" />
-            <ComboBox fx:id="cbVeiculo" prefWidth="320.0" promptText="Seleccione o veículo" />
-            <Button fx:id="btnConsultar" mnemonicParsing="false" onAction="#consultar" styleClass="btn-primario" text="Consultar" />
-            <Label fx:id="lblMensagem" styleClass="mensagem-erro" />
+            <VBox spacing="4.0">
+               <children>
+                  <Label styleClass="form-label" text="Filtrar por Veículo" />
+                  <ComboBox fx:id="cbVeiculo" onAction="#consultar" prefWidth="240.0" promptText="Todos os veículos" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="form-label" text="Pesquisar nos Serviços" />
+                  <TextField fx:id="txtPesquisa" promptText="🔍 Pesquisar por matrícula, cliente, destino..." />
+               </children>
+            </VBox>
+            <VBox alignment="BOTTOM_LEFT" spacing="4.0">
+               <children>
+                  <HBox spacing="8.0">
+                     <children>
+                        <Button fx:id="btnVerDetalhes" mnemonicParsing="false" onAction="#verDetalhes" styleClass="btn-secundario" text="👁 Ver Detalhes" />
+                        <Button fx:id="btnExportar" mnemonicParsing="false" onAction="#exportar" styleClass="btn-primario" text="📥 Exportar (PDF / CSV)" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
          </children>
       </HBox>
+
+      <!-- Cards de Resumo -->
       <HBox spacing="16.0">
          <children>
-            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
-               <styleClass>
-                  <String fx:value="card" />
-                  <String fx:value="kpi" />
-               </styleClass>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS" styleClass="card, kpi">
                <padding>
                   <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
                </padding>
@@ -42,28 +64,36 @@
                   <Label fx:id="lblNumServicos" styleClass="kpi-valor" text="0" />
                </children>
             </VBox>
-            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
-               <styleClass>
-                  <String fx:value="card" />
-                  <String fx:value="kpi" />
-               </styleClass>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS" styleClass="card, kpi">
                <padding>
                   <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
                </padding>
                <children>
-                  <Label styleClass="kpi-rotulo" text="Total arrecadado" />
+                  <Label styleClass="kpi-rotulo" text="Volume Total Transportado" />
+                  <Label fx:id="lblTotalCarga" styleClass="kpi-valor" text="0 t" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS" styleClass="card, kpi">
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </padding>
+               <children>
+                  <Label styleClass="kpi-rotulo" text="Total arrecadado (MZN)" />
                   <Label fx:id="lblTotal" styleClass="kpi-valor" text="0,00 MZN" />
                </children>
             </VBox>
          </children>
       </HBox>
-      <TableView fx:id="tabela" VBox.vgrow="ALWAYS">
+
+      <!-- Tabela de Detalhes dos Carregamentos -->
+      <TableView fx:id="tabela" onMouseClicked="#selecionarLinha" VBox.vgrow="ALWAYS">
          <columns>
             <TableColumn fx:id="colData" prefWidth="95.0" text="Data" />
-            <TableColumn fx:id="colCliente" prefWidth="160.0" text="Cliente" />
-            <TableColumn fx:id="colQuantidade" prefWidth="90.0" text="Qtd. (ton)" />
-            <TableColumn fx:id="colOrigem" prefWidth="120.0" text="Origem" />
-            <TableColumn fx:id="colDestino" prefWidth="120.0" text="Destino" />
+            <TableColumn fx:id="colVeiculo" prefWidth="120.0" text="Veículo" />
+            <TableColumn fx:id="colCliente" prefWidth="150.0" text="Cliente" />
+            <TableColumn fx:id="colOrigem" prefWidth="110.0" text="Origem" />
+            <TableColumn fx:id="colDestino" prefWidth="110.0" text="Destino" />
+            <TableColumn fx:id="colQuantidade" prefWidth="90.0" text="Qtd. / Lotação" />
             <TableColumn fx:id="colValor" prefWidth="110.0" text="Valor (MZN)" />
          </columns>
          <columnResizePolicy>

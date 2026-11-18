@@ -4,7 +4,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextField?>
@@ -21,8 +20,8 @@
       <!-- Cabeçalho da Página -->
       <VBox spacing="4.0">
          <children>
-            <Label styleClass="titulo-pagina" text="Novo carregamento" />
-            <Label styleClass="subtitulo-pagina" text="A quantidade é validada contra a capacidade do veículo" />
+            <Label styleClass="titulo-pagina" text="Novo carregamento / serviço" />
+            <Label styleClass="subtitulo-pagina" text="Validação em tempo real de carga e lotação · Data automática do sistema" />
          </children>
       </VBox>
 
@@ -30,8 +29,8 @@
       <HBox spacing="12.0">
          <children>
             <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="passo, passo-activo" text="1 · Cliente e veículo" HBox.hgrow="ALWAYS" />
-            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="passo" text="2 · Carga" HBox.hgrow="ALWAYS" />
-            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="passo" text="3 · Rota e data" HBox.hgrow="ALWAYS" />
+            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="passo" text="2 · Carga ou Passageiros" HBox.hgrow="ALWAYS" />
+            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="passo" text="3 · Rota" HBox.hgrow="ALWAYS" />
             <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="passo" text="4 · Confirmar" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
@@ -39,7 +38,7 @@
       <!-- Layout Duas Colunas (Campos do Formulário + Validador Visual) -->
       <HBox spacing="18.0" VBox.vgrow="ALWAYS">
          <children>
-            <!-- COLUNA ESQUERDA: CAMPOS DO CARREGAMENTO -->
+            <!-- COLUNA ESQUERDA: CAMPOS DO SERVIÇO -->
             <VBox spacing="16.0" styleClass="card" HBox.hgrow="ALWAYS">
                <children>
                   <GridPane hgap="16.0" vgap="14.0">
@@ -68,7 +67,7 @@
                            </children>
                         </VBox>
 
-                        <!-- Linha 2: Proprietário e Mercadoria -->
+                        <!-- Linha 2: Proprietário e Mercadoria / Detalhes -->
                         <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
                            <children>
                               <Label styleClass="form-label" text="Proprietário (automático)" />
@@ -77,34 +76,24 @@
                         </VBox>
                         <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Label styleClass="form-label" text="Mercadoria / Carga" />
-                              <TextField fx:id="txtTipoVeiculo" promptText="Ex.: Sacos de milho / Cimento" />
+                              <Label fx:id="lblTipoVeiculo" styleClass="form-label" text="Mercadoria / Descrição do Serviço" />
+                              <TextField fx:id="txtTipoVeiculo" promptText="Ex.: Sacos de milho / Viagem de Passageiros" />
                            </children>
                         </VBox>
 
-                        <!-- Linha 3: Quantidade, Data e Valor -->
-                        <HBox spacing="10.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                        <!-- Linha 3: Quantidade (Carga / Passageiros) e Valor (Data removida do formulário) -->
+                        <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
                            <children>
-                              <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label styleClass="form-label" text="Quantidade (toneladas)" />
-                                    <TextField fx:id="txtQuantidade" promptText="Ex.: 12" />
-                                 </children>
-                              </VBox>
-                              <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label styleClass="form-label" text="Data" />
-                                    <DatePicker fx:id="dpData" maxWidth="1.7976931348623157E308" promptText="DD-MM-AAAA" />
-                                 </children>
-                              </VBox>
-                              <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label styleClass="form-label" text="Valor cobrado (MZN)" />
-                                    <TextField fx:id="txtValor" promptText="Ex.: 45000" />
-                                 </children>
-                              </VBox>
+                              <Label fx:id="lblQuantidade" styleClass="form-label" text="Quantidade (toneladas / passageiros)" />
+                              <TextField fx:id="txtQuantidade" promptText="Ex.: 12" />
                            </children>
-                        </HBox>
+                        </VBox>
+                        <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <Label styleClass="form-label" text="Valor cobrado (MZN)" />
+                              <TextField fx:id="txtValor" promptText="Ex.: 45000" />
+                           </children>
+                        </VBox>
 
                         <!-- Linha 4: Origem e Destino -->
                         <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
@@ -126,7 +115,7 @@
                </children>
             </VBox>
 
-            <!-- COLUNA DIREITA: VALIDAÇÃO DE CAPACIDADE -->
+            <!-- COLUNA DIREITA: VALIDAÇÃO DE CAPACIDADE E LOTAÇÃO -->
             <VBox alignment="CENTER" maxWidth="380.0" minWidth="300.0" prefWidth="340.0" spacing="18.0" styleClass="card">
                <padding>
                   <Insets bottom="24.0" left="20.0" right="20.0" top="20.0" />
@@ -141,7 +130,7 @@
                         <VBox alignment="CENTER" spacing="2.0">
                            <children>
                               <Label fx:id="lblCapacidade" styleClass="kpi-valor" style="-fx-font-size: 26px;" text="0" />
-                              <Label styleClass="texto-suave, texto-pequeno" text="Capacidade máx. (t)" />
+                              <Label fx:id="lblRotuloCapacidade" styleClass="texto-suave, texto-pequeno" text="Capacidade máx." />
                            </children>
                         </VBox>
                      </children>
@@ -156,8 +145,8 @@
                   <!-- Botões de Ação -->
                   <VBox spacing="10.0" style="-fx-max-width: infinity;">
                      <children>
-                        <Button fx:id="btnRegistar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#registar" styleClass="btn-primario" text="⤓ Registar" />
-                        <Button fx:id="btnLimpar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#limpar" styleClass="btn-secundario" text="Limpar" />
+                        <Button fx:id="btnRegistar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#registar" styleClass="btn-primario" text="📥 Registar" />
+                        <Button fx:id="btnLimpar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#limpar" styleClass="btn-secundario" text="🧹 Limpar" />
                      </children>
                   </VBox>
                </children>

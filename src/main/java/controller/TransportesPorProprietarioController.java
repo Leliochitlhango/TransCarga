@@ -8,8 +8,6 @@ import dataStructure.ListaDuplamenteLigada;
 import java.time.LocalDate;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
@@ -18,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Camiao;
 import model.Carrinha;
@@ -26,13 +25,15 @@ import model.Proprietario;
 
 public class TransportesPorProprietarioController {
 
-    private final ObservableList<Carregamento> dadosTabela = FXCollections.observableArrayList();
+    private final ListaDuplamenteLigada<Carregamento> dadosTabela = new ListaDuplamenteLigada<>();
     private ListaDuplamenteLigada<Proprietario> proprietarios;
     private ListaDuplamenteLigada<Carregamento> todosCarregamentos;
     private ListaDuplamenteLigada<Camiao> camioes;
     private ListaDuplamenteLigada<Carrinha> carrinhas;
 
     @FXML private ComboBox<String> cbProprietario;
+    @FXML private TextField txtPesquisa;
+
     @FXML private TableColumn<Carregamento, String> colCliente;
     @FXML private TableColumn<Carregamento, LocalDate> colData;
     @FXML private TableColumn<Carregamento, String> colDestino;
@@ -58,6 +59,8 @@ public class TransportesPorProprietarioController {
         configurarTabela();
         configurarComboProprietarios();
         configurarComboVeiculos();
+        configurarFiltroPesquisa();
+        filtrarTabela();
     }
 
     private void carregarDados() {
@@ -74,20 +77,21 @@ public class TransportesPorProprietarioController {
     private void configurarTabela() {
         colData.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().getData()));
         colCliente.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getCliente() != null ? c.getValue().getCliente().getNome() : ""));
+                c.getValue().getCliente() != null ? c.getValue().getCliente().getNome() : "Não informado"));
         colVeiculo.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getVeiculo() != null ? c.getValue().getVeiculo().getMatricula() : ""));
+                c.getValue().getVeiculo() != null ? c.getValue().getVeiculo().getMatricula() : "Não informado"));
         colDestino.setCellValueFactory(new PropertyValueFactory<>("locaDestino"));
         colOrigem.setCellValueFactory(new PropertyValueFactory<>("localOrigem"));
         colQuantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
         colValor.setCellValueFactory(new PropertyValueFactory<>("valorCobrado"));
 
-        tabela.setItems(dadosTabela);
+        tabela.setItems(dadosTabela.asObservableList());
     }
 
     private void configurarComboProprietarios() {
         if (cbProprietario == null) return;
         cbProprietario.getItems().clear();
+        cbProprietario.getItems().add("Todos os proprietários");
 
         if (proprietarios != null) {
             for (Proprietario p : proprietarios) {
@@ -96,6 +100,7 @@ public class TransportesPorProprietarioController {
                 }
             }
         }
+        cbProprietario.setValue("Todos os proprietários");
     }
 
     private void configurarComboVeiculos() {
@@ -118,26 +123,66 @@ public class TransportesPorProprietarioController {
         }
     }
 
+    private void configurarFiltroPesquisa() {
+        if (txtPesquisa != null) {
+            txtPesquisa.textProperty().addListener((obs, oldVal, newVal) -> {
+                filtrarTabela();
+            });
+        }
+    }
+
     @FXML
     void proprietarioSelecionado(ActionEvent event) {
-        String propNome = cbProprietario.getValue();
-        if (propNome == null || propNome.trim().isEmpty()) {
-            return;
-        }
+        filtrarTabela();
+    }
 
+    private void filtrarTabela() {
         dadosTabela.clear();
+
+        String propSelecionado = cbProprietario != null ? cbProprietario.getValue() : null;
+        boolean filtrarPorProp = propSelecionado != null && !propSelecionado.equals("Todos os proprietários");
+
+        String termo = txtPesquisa != null && txtPesquisa.getText() != null ? 
+                txtPesquisa.getText().trim().toLowerCase() : "";
+
         int qtdServicos = 0;
         double subtotal = 0.0;
 
         if (todosCarregamentos != null) {
             for (Carregamento c : todosCarregamentos) {
-                if (c != null && c.getVeiculo() != null && c.getVeiculo().getProprietario() != null) {
-                    if (propNome.equals(c.getVeiculo().getProprietario().getNome())) {
-                        dadosTabela.add(c);
-                        qtdServicos++;
-                        subtotal += c.getValorCobrado();
+                if (c == null) continue;
+
+                // Checar filtro de proprietário
+                if (filtrarPorProp) {
+                    if (c.getVeiculo() == null || c.getVeiculo().getProprietario() == null) {
+                        continue;
+                    }
+                    if (!propSelecionado.equalsIgnoreCase(c.getVeiculo().getProprietario().getNome())) {
+                        continue;
                     }
                 }
+
+                // Checar filtro de texto em todos os campos
+                if (!termo.isEmpty()) {
+                    boolean matchMatricula = c.getVeiculo() != null && c.getVeiculo().getMatricula() != null && 
+                            c.getVeiculo().getMatricula().toLowerCase().contains(termo);
+                    boolean matchCliente = c.getCliente() != null && c.getCliente().getNome() != null && 
+                            c.getCliente().getNome().toLowerCase().contains(termo);
+                    boolean matchOrigem = c.getLocalOrigem() != null && c.getLocalOrigem().toLowerCase().contains(termo);
+                    boolean matchDestino = c.getLocaDestino() != null && c.getLocaDestino().toLowerCase().contains(termo);
+                    boolean matchProp = c.getVeiculo() != null && c.getVeiculo().getProprietario() != null && 
+                            c.getVeiculo().getProprietario().getNome() != null && 
+                            c.getVeiculo().getProprietario().getNome().toLowerCase().contains(termo);
+                    boolean matchData = c.getData() != null && c.getData().toString().contains(termo);
+
+                    if (!matchMatricula && !matchCliente && !matchOrigem && !matchDestino && !matchProp && !matchData) {
+                        continue;
+                    }
+                }
+
+                dadosTabela.add(c);
+                qtdServicos++;
+                subtotal += c.getValorCobrado();
             }
         }
 
@@ -148,7 +193,7 @@ public class TransportesPorProprietarioController {
             lblTotal.setText(String.format("Subtotal: %.2f MZN", subtotal));
         }
         if (lblMensagem != null) {
-            lblMensagem.setText(qtdServicos == 0 ? "Nenhum transporte encontrado para este proprietário." : "");
+            lblMensagem.setText(qtdServicos == 0 ? "Nenhum resultado encontrado para os filtros actuais." : "");
         }
     }
 
@@ -166,7 +211,7 @@ public class TransportesPorProprietarioController {
 
         if (todosCarregamentos != null) {
             for (Carregamento c : todosCarregamentos) {
-                if (c != null && c.getVeiculo() != null && matricula.equals(c.getVeiculo().getMatricula())) {
+                if (c != null && c.getVeiculo() != null && matricula.equalsIgnoreCase(c.getVeiculo().getMatricula())) {
                     qtdServicos++;
                     totalValor += c.getValorCobrado();
                     if (c.getData() != null) {
@@ -198,6 +243,6 @@ public class TransportesPorProprietarioController {
 
     @FXML
     void consultar(ActionEvent event) {
-        proprietarioSelecionado(event);
+        filtrarTabela();
     }
 }

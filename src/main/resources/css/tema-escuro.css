@@ -1,0 +1,110 @@
+/* ==========================================================
+   TransCarga Moçambique - tema-escuro.css
+   Conforme especificações da Página 2 do PDF de Design
+   ========================================================== */
+
+.root {
+    -cor-fundo: #1D282C;
+    -cor-card: #27373D;
+    -cor-texto: #FFFFFF;
+    -cor-suave: #8FA29D;
+    -cor-linha: #33454B;
+    -cor-campo: #1F2E33;
+    -cor-borda: #384C52;
+    -cor-cabecalho: #223238;
+    -cor-selecao: rgba(0, 168, 90, 0.25);
+
+    -cor-menu: #1E2C31;
+    -cor-menu-icones: #162226;
+    -cor-menu-texto: #C2D4CF;
+    -cor-menu-activo-fundo: #FFFFFF;
+    -cor-menu-activo-texto: #008A4A;
+
+    -cor-verde: #00A85A;
+    -cor-verde-esc: #008A4A;
+    -cor-texto-verde: #2ECC71;
+    -cor-amarelo: #F5B800;
+    -cor-vermelho: #FF5A5F;
+    -cor-icone-fundo: #1A3831;
+    -cor-icone: #00A85A;
+
+    -fx-base: -cor-card;
+    -fx-background-color: -cor-fundo;
+}
+
+.kpi-icone {
+    -fx-background-color: -cor-icone-fundo;
+}
+.kpi-emoji {
+    -fx-text-fill: -cor-texto-verde;
+}
+
+/* Ajustes visuais para componentes no modo escuro */
+.text-field, .password-field, .text-area, .spinner .text-field {
+    -fx-background-color: -cor-campo;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #6E837D;
+    -fx-border-color: -cor-borda;
+}
+
+.combo-box, .date-picker {
+    -fx-background-color: -cor-campo;
+    -fx-border-color: -cor-borda;
+}
+.combo-box .list-cell, .date-picker .text-field {
+    -fx-text-fill: white;
+}
+.combo-box-popup .list-view {
+    -fx-background-color: -cor-card;
+    -fx-border-color: -cor-borda;
+}
+.combo-box-popup .list-cell {
+    -fx-text-fill: white;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+}
+.table-view .column-header-background {
+    -fx-background-color: -cor-cabecalho;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #E0EBE8;
+}
+.table-view .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -cor-linha transparent;
+}
+.table-view .table-cell {
+    -fx-text-fill: #FFFFFF;
+}
+
+.card {
+    -fx-background-color: -cor-card;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 8, 0, 0, 2);
+}
+
+.caixa-pesquisa {
+    -fx-background-color: -cor-card;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.30), 6, 0, 0, 1);
+}
+
+.passo {
+    -fx-background-color: -cor-card;
+    -fx-text-fill: -cor-suave;
+}
+
+.segmentos {
+    -fx-background-color: -cor-card;
+}
+
+.date-picker-popup {
+    -fx-background-color: -cor-card;
+    -fx-border-color: -cor-borda;
+}
+.date-picker-popup .month-year-pane {
+    -fx-background-color: -cor-card;
+}
+.date-picker-popup .day-cell {
+    -fx-text-fill: white;
+}

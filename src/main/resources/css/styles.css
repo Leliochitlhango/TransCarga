@@ -152,7 +152,11 @@
     -fx-min-width: 48; -fx-min-height: 48; -fx-pref-width: 48; -fx-pref-height: 48;
     -fx-alignment: center;
 }
-/* Para icones Ikonli dentro do circulo: -fx-icon-color */
+.kpi-emoji {
+    -fx-font-size: 22px;
+    -fx-text-fill: -cor-icone;
+    -fx-alignment: center;
+}
 .kpi-icone .ikonli-font-icon { -fx-icon-color: -cor-icone; }
 
 /* ---------- 5. BOTOES ---------- */
@@ -405,3 +409,48 @@
 .context-menu { -fx-background-color: -cor-card; -fx-border-color: -cor-borda; -fx-background-radius: 8; }
 .menu-item:focused { -fx-background-color: -cor-selecao; }
 .menu-item .label { -fx-text-fill: -cor-texto; }
+
+/* ---------- 14. MODO ESCURO (Página 2 do PDF) ---------- */
+.modo-escuro {
+    -cor-fundo: #1D282C;
+    -cor-card: #27373D;
+    -cor-texto: #FFFFFF;
+    -cor-suave: #8FA29D;
+    -cor-linha: #33454B;
+    -cor-campo: #1F2E33;
+    -cor-borda: #384C52;
+    -cor-cabecalho: #223238;
+    -cor-selecao: rgba(0, 168, 90, 0.25);
+
+    -cor-menu: #1E2C31;
+    -cor-menu-icones: #162226;
+    -cor-menu-texto: #C2D4CF;
+    -cor-menu-activo-fundo: #FFFFFF;
+    -cor-menu-activo-texto: #008A4A;
+
+    -cor-verde: #00A85A;
+    -cor-verde-esc: #008A4A;
+    -cor-texto-verde: #2ECC71;
+    -cor-amarelo: #F5B800;
+    -cor-vermelho: #FF5A5F;
+    -cor-icone-fundo: #1A3831;
+    -cor-icone: #00A85A;
+
+    -fx-base: -cor-card;
+    -fx-background-color: -cor-fundo;
+}
+.modo-escuro .card {
+    -fx-background-color: #27373D;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 8, 0, 0, 2);
+}
+.modo-escuro .text-field, .modo-escuro .password-field, .modo-escuro .combo-box, .modo-escuro .date-picker {
+    -fx-background-color: #1F2E33;
+    -fx-text-fill: white;
+    -fx-border-color: #384C52;
+}
+.modo-escuro .table-view .column-header-background {
+    -fx-background-color: #223238;
+}
+.modo-escuro .table-view .table-cell {
+    -fx-text-fill: white;
+}

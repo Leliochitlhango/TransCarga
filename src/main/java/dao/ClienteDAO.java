@@ -82,25 +82,24 @@ public class ClienteDAO {
     }
 
     public boolean remove(Cliente cliente) {
-
         Transaction transaction = null;
-
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
             transaction = session.beginTransaction();
-
-            session.remove(cliente);
-
-            transaction.commit();
-
-            return true;
-
+            Cliente entity = session.find(Cliente.class, cliente.getId());
+            if (entity != null) {
+                session.remove(entity);
+                transaction.commit();
+                return true;
+            }
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             throw e;
         }
-
     }
 }

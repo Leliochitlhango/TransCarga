@@ -16,7 +16,7 @@
       <VBox spacing="4.0">
          <children>
             <Label styleClass="titulo-pagina" text="Clientes" />
-            <Label styleClass="subtitulo-pagina" text="Quem contrata os transportes" />
+            <Label styleClass="subtitulo-pagina" text="Empresas e pessoas que contratam os serviços de transporte" />
          </children>
       </VBox>
 
@@ -30,7 +30,7 @@
                      <children>
                         <Label styleClass="card-titulo" text="Lista de clientes" />
                         <Pane HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#limpar" styleClass="btn-primario" text="+ Novo" />
+                        <Button mnemonicParsing="false" onAction="#limpar" styleClass="btn-primario" text="➕ Novo" />
                      </children>
                   </HBox>
 
@@ -48,13 +48,11 @@
                   <!-- Paginação -->
                   <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
-                        <Label styleClass="texto-suave, texto-pequeno" text="Mostrar 10 · Total 24" />
+                        <Label fx:id="lblTotalTabela" styleClass="texto-suave, texto-pequeno" text="Total de clientes cadastrados" />
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox spacing="6.0">
                            <children>
                               <Button styleClass="btn-primario" style="-fx-min-width: 32px; -fx-min-height: 32px; -fx-padding: 0;" text="1" />
-                              <Button styleClass="btn-secundario" style="-fx-min-width: 32px; -fx-min-height: 32px; -fx-padding: 0;" text="2" />
-                              <Button styleClass="btn-secundario" style="-fx-min-width: 32px; -fx-min-height: 32px; -fx-padding: 0;" text="3" />
                            </children>
                         </HBox>
                      </children>
@@ -69,21 +67,21 @@
 
                   <VBox spacing="6.0">
                      <children>
-                        <Label styleClass="form-label" text="Nome" />
-                        <TextField fx:id="txtNome" promptText="Ex.: Agro Beira" />
+                        <Label styleClass="form-label" text="Nome do Cliente / Empresa" />
+                        <TextField fx:id="txtNome" promptText="Ex.: Agro Beira ou Mercado Zimpeto" />
                      </children>
                   </VBox>
 
                   <VBox spacing="6.0">
                      <children>
-                        <Label styleClass="form-label" text="Contacto" />
-                        <TextField fx:id="txtContacto" promptText="Ex.: 84 111 0001" />
+                        <Label styleClass="form-label" text="Contacto (8X XXX XXXX)" />
+                        <TextField fx:id="txtContacto" promptText="84 111 0001" />
                      </children>
                   </VBox>
 
                   <VBox spacing="6.0">
                      <children>
-                        <Label styleClass="form-label" text="Localização" />
+                        <Label styleClass="form-label" text="Localização / Província" />
                         <TextField fx:id="txtLocalizacao" promptText="Ex.: Beira / Bairro Central" />
                      </children>
                   </VBox>
@@ -97,14 +95,14 @@
                      <children>
                         <HBox spacing="10.0">
                            <children>
-                              <Button fx:id="btnGuardar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#guardar" styleClass="btn-primario" text="⤓ Guardar" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="btnActualizar" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#actualizar" styleClass="btn-secundario" text="Actualizar" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="btnGuardar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#guardar" styleClass="btn-primario" text="💾 Guardar" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="btnActualizar" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#actualizar" styleClass="btn-secundario" text="✏ Actualizar" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                         <HBox spacing="10.0">
                            <children>
-                              <Button fx:id="btnLimpar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#limpar" styleClass="btn-secundario" text="Limpar" HBox.hgrow="ALWAYS" />
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#limpar" styleClass="btn-perigo" text="Eliminar" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="btnLimpar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#limpar" styleClass="btn-secundario" text="🧹 Limpar" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="btnEliminar" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#eliminar" styleClass="btn-perigo" text="🗑 Eliminar" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                      </children>

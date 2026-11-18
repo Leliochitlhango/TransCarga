@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
@@ -31,9 +30,11 @@ public class CarregamentoViewController {
     @FXML private Button btnRegistar;
     @FXML private ComboBox<String> cbCliente;
     @FXML private ComboBox<String> cbVeiculo;
-    @FXML private DatePicker dpData;
     @FXML private TextField txtTipoVeiculo;
+    @FXML private Label lblTipoVeiculo;
+    @FXML private Label lblQuantidade;
     @FXML private Label lblCapacidade;
+    @FXML private Label lblRotuloCapacidade;
     @FXML private Label lblValidacao;
     @FXML private TextField txtDestino;
     @FXML private TextField txtOrigem;
@@ -45,6 +46,7 @@ public class CarregamentoViewController {
     @FXML private Label lblStatusCapacidade;
 
     private double capacidadeVeiculoAtual = 0.0;
+    private boolean isVeiculoPassageiros = false;
 
     @FXML
     public void initialize() {
@@ -58,6 +60,7 @@ public class CarregamentoViewController {
             camioes = new CamiaoDAO().findAll();
             carrinhas = new CarrinhaDAO().findAll();
 
+            cbCliente.getItems().clear();
             if (clientes != null) {
                 for (Cliente c : clientes) {
                     if (c != null && c.getNome() != null) {
@@ -66,6 +69,7 @@ public class CarregamentoViewController {
                 }
             }
 
+            cbVeiculo.getItems().clear();
             if (camioes != null) {
                 for (Camiao c : camioes) {
                     if (c != null && c.getMatricula() != null) {
@@ -85,26 +89,22 @@ public class CarregamentoViewController {
             e.printStackTrace();
         }
 
-        if (dpData != null) {
-            dpData.setValue(LocalDate.now());
-        }
         if (lblValidacao != null) {
             lblValidacao.setText("");
         }
     }
 
     private void configurarValidacoesPorEventos() {
-        // Evento ao alterar quantidade: validação numérica e cálculo em tempo real de capacidade
+        // Evento ao alterar quantidade: validação em tempo real de carga ou lotação
         txtQuantidade.textProperty().addListener((obs, oldVal, newVal) -> {
             validarQuantidadeEmTempoReal();
         });
 
-        // Evento ao alterar valor: validação numérica
+        // Evento ao alterar valor cobrado: validação numérica
         txtValor.textProperty().addListener((obs, oldVal, newVal) -> {
             validarValorEmTempoReal();
         });
 
-        // Eventos para campos de texto limparem erro ao digitar
         txtOrigem.textProperty().addListener((obs, oldVal, newVal) -> {
             txtOrigem.getStyleClass().remove("campo-erro");
             if (lblValidacao != null && lblValidacao.getText().contains("origem")) {
@@ -130,13 +130,6 @@ public class CarregamentoViewController {
             cbVeiculo.getStyleClass().remove("campo-erro");
             veiculoSelecionado(null);
         });
-
-        dpData.valueProperty().addListener((obs, oldVal, newVal) -> {
-            dpData.getStyleClass().remove("campo-erro");
-            if (lblValidacao != null && lblValidacao.getText().contains("data")) {
-                lblValidacao.setText("");
-            }
-        });
     }
 
     private void validarQuantidadeEmTempoReal() {
@@ -160,14 +153,19 @@ public class CarregamentoViewController {
 
             if (capacidadeVeiculoAtual > 0 && qtd > capacidadeVeiculoAtual) {
                 if (lblValidacao != null) {
-                    lblValidacao.setText(String.format("Atenção: Quantidade (%.1f t) excede a capacidade (%.1f t)!",
-                            qtd, capacidadeVeiculoAtual));
+                    if (isVeiculoPassageiros) {
+                        lblValidacao.setText(String.format("⚠️ Excesso de lotação! Passageiros (%.0f) excede a capacidade máxima de %.0f lugares!",
+                                qtd, capacidadeVeiculoAtual));
+                    } else {
+                        lblValidacao.setText(String.format("⚠️ Carga excessiva! Quantidade (%.1f t) excede a capacidade máxima suportada (%.1f t)!",
+                                qtd, capacidadeVeiculoAtual));
+                    }
                 }
-            } else if (lblValidacao != null && lblValidacao.getText().contains("capacidade")) {
+            } else if (lblValidacao != null && (lblValidacao.getText().contains("capacidade") || lblValidacao.getText().contains("lotação"))) {
                 lblValidacao.setText("");
             }
         } catch (NumberFormatException ex) {
-            marcarErro(txtQuantidade, "Quantidade inválida. Introduza apenas números (ex: 12 ou 15.5).");
+            marcarErro(txtQuantidade, "Quantidade inválida. Introduza apenas números.");
             atualizarIndicadorCapacidade(0.0);
         }
     }
@@ -213,9 +211,13 @@ public class CarregamentoViewController {
             if (!piCapacidade.getStyleClass().contains("capacidade-excedida")) {
                 piCapacidade.getStyleClass().add("capacidade-excedida");
             }
-            lblStatusCapacidade.setText(String.format("Capacidade excedida (%.0f%%)", percentual * 100));
+            if (isVeiculoPassageiros) {
+                lblStatusCapacidade.setText(String.format("Lotação excedida (%.0f%%)", percentual * 100));
+            } else {
+                lblStatusCapacidade.setText(String.format("Carga excedida (%.0f%%)", percentual * 100));
+            }
             lblStatusCapacidade.getStyleClass().setAll("pilula", "pilula-vermelha");
-            btnRegistar.setDisable(true); // Bloqueia conforme indicado na interface
+            btnRegistar.setDisable(true); // Bloqueia conforme requerido
         } else {
             piCapacidade.getStyleClass().remove("capacidade-excedida");
             if (!piCapacidade.getStyleClass().contains("capacidade-ok")) {
@@ -225,7 +227,8 @@ public class CarregamentoViewController {
                 lblStatusCapacidade.setText("Disponível (0%)");
                 lblStatusCapacidade.getStyleClass().setAll("pilula", "pilula-verde");
             } else {
-                lblStatusCapacidade.setText(String.format("Dentro da capacidade (%.0f%%)", percentual * 100));
+                String desc = isVeiculoPassageiros ? "Dentro da lotação" : "Dentro da capacidade";
+                lblStatusCapacidade.setText(String.format("%s (%.0f%%)", desc, percentual * 100));
                 lblStatusCapacidade.getStyleClass().setAll("pilula", "pilula-verde");
             }
             btnRegistar.setDisable(false);
@@ -239,20 +242,33 @@ public class CarregamentoViewController {
 
         Veiculo veiculo = encontrarVeiculo(matricula);
         if (veiculo != null) {
-            capacidadeVeiculoAtual = veiculo.getCapacidadeCarga();
-            lblCapacidade.setText(String.valueOf(veiculo.getCapacidadeCarga()));
-            
+            if (veiculo instanceof Carrinha) {
+                Carrinha car = (Carrinha) veiculo;
+                isVeiculoPassageiros = true;
+                int maxPass = car.getPassageiros() != null ? car.getPassageiros() : car.getCapacidadeCarga();
+                capacidadeVeiculoAtual = maxPass;
+                lblCapacidade.setText(String.valueOf(maxPass));
+                if (lblRotuloCapacidade != null) lblRotuloCapacidade.setText("Lotação máx. (pass.)");
+                if (lblQuantidade != null) lblQuantidade.setText("Total de Passageiros a transportar");
+                if (lblTipoVeiculo != null) lblTipoVeiculo.setText("Tipo de Serviço / Rota de Passageiros");
+                txtTipoVeiculo.setText(car.getTipoCarroceria() != null ? car.getTipoCarroceria() : "Transporte de Passageiros");
+                txtQuantidade.setPromptText("Ex.: 15");
+            } else {
+                Camiao cam = (Camiao) veiculo;
+                isVeiculoPassageiros = false;
+                capacidadeVeiculoAtual = cam.getCapacidadeCarga();
+                lblCapacidade.setText(String.valueOf(cam.getCapacidadeCarga()));
+                if (lblRotuloCapacidade != null) lblRotuloCapacidade.setText("Capacidade máx. (ton)");
+                if (lblQuantidade != null) lblQuantidade.setText("Quantidade de Carga (toneladas)");
+                if (lblTipoVeiculo != null) lblTipoVeiculo.setText("Mercadoria / Carga a transportar");
+                txtTipoVeiculo.setText(cam.getTipoMercadoria() != null ? cam.getTipoMercadoria() : "Carga Geral");
+                txtQuantidade.setPromptText("Ex.: 12");
+            }
+
             if (veiculo.getProprietario() != null) {
                 txtProprietario.setText(veiculo.getProprietario().getNome());
             } else {
                 txtProprietario.setText("Sem proprietário");
-            }
-
-            if (veiculo instanceof Camiao) {
-                Camiao cam = (Camiao) veiculo;
-                txtTipoVeiculo.setText(cam.getTipoMercadoria() != null ? cam.getTipoMercadoria() : "Carga Geral");
-            } else if (veiculo instanceof Carrinha) {
-                txtTipoVeiculo.setText("Carga Leve / Encomendas");
             }
 
             validarQuantidadeEmTempoReal();
@@ -275,7 +291,6 @@ public class CarregamentoViewController {
 
     @FXML
     void registar(ActionEvent event) {
-        // Validação completa de todos os campos
         boolean temErro = false;
 
         if (cbCliente.getValue() == null || cbCliente.getValue().trim().isEmpty()) {
@@ -291,7 +306,7 @@ public class CarregamentoViewController {
         String qtdStr = txtQuantidade.getText() != null ? txtQuantidade.getText().trim() : "";
         double quantidade = 0.0;
         if (qtdStr.isEmpty()) {
-            marcarErro(txtQuantidade, "Preencha a quantidade.");
+            marcarErro(txtQuantidade, "Preencha a quantidade ou total de passageiros.");
             temErro = true;
         } else {
             try {
@@ -307,12 +322,9 @@ public class CarregamentoViewController {
         }
 
         if (capacidadeVeiculoAtual > 0 && quantidade > capacidadeVeiculoAtual) {
-            marcarErro(txtQuantidade, "A quantidade é maior que a capacidade do veículo.");
-            temErro = true;
-        }
-
-        if (dpData.getValue() == null) {
-            marcarErro(dpData, "Seleccione a data do carregamento.");
+            marcarErro(txtQuantidade, isVeiculoPassageiros ? 
+                    "⚠️ A lotação informada excede a capacidade máxima de passageiros do veículo!" : 
+                    "⚠️ A quantidade informada excede a capacidade de carga suportada pelo veículo!");
             temErro = true;
         }
 
@@ -353,7 +365,8 @@ public class CarregamentoViewController {
             novoCarregamento.setLocalOrigem(txtOrigem.getText().trim());
             novoCarregamento.setLocaDestino(txtDestino.getText().trim());
             novoCarregamento.setValorCobrado(valorCobrado);
-            novoCarregamento.setData(dpData.getValue());
+            // Data é extraída automaticamente pelo sistema
+            novoCarregamento.setData(LocalDate.now());
             novoCarregamento.setQuantidade(quantidade);
 
             if (clientes != null) {
@@ -372,7 +385,7 @@ public class CarregamentoViewController {
 
             new CarregamentoDAO().save(novoCarregamento);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Carregamento registado com sucesso!");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Serviço / Carregamento registado com sucesso com a data de hoje (" + LocalDate.now() + ")!");
             alert.setHeaderText("Operação Concluída");
             alert.showAndWait();
 
@@ -396,10 +409,14 @@ public class CarregamentoViewController {
         txtValor.clear();
         txtOrigem.clear();
         txtDestino.clear();
-        dpData.setValue(LocalDate.now());
 
         capacidadeVeiculoAtual = 0.0;
+        isVeiculoPassageiros = false;
         lblCapacidade.setText("0");
+        if (lblRotuloCapacidade != null) lblRotuloCapacidade.setText("Capacidade máx.");
+        if (lblQuantidade != null) lblQuantidade.setText("Quantidade (toneladas / passageiros)");
+        if (lblTipoVeiculo != null) lblTipoVeiculo.setText("Mercadoria / Descrição do Serviço");
+
         if (piCapacidade != null) {
             piCapacidade.setProgress(0.0);
             piCapacidade.getStyleClass().remove("capacidade-excedida");
@@ -416,14 +433,12 @@ public class CarregamentoViewController {
         }
         btnRegistar.setDisable(false);
 
-        // Limpar estilo de erro
         cbCliente.getStyleClass().remove("campo-erro");
         cbVeiculo.getStyleClass().remove("campo-erro");
         txtQuantidade.getStyleClass().remove("campo-erro");
         txtValor.getStyleClass().remove("campo-erro");
         txtOrigem.getStyleClass().remove("campo-erro");
         txtDestino.getStyleClass().remove("campo-erro");
-        dpData.getStyleClass().remove("campo-erro");
     }
 
     private void marcarErro(javafx.scene.Node campo, String mensagem) {

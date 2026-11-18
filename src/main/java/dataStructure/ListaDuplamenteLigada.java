@@ -1,11 +1,16 @@
 package dataStructure;
 
+import java.util.AbstractList;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
-import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Predicate;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-public class ListaDuplamenteLigada<T> implements ListaDuplamenteLigada1<T>, Iterable<T> {
+public class ListaDuplamenteLigada<T> extends AbstractList<T> implements ListaDuplamenteLigada1<T>, Iterable<T> {
 
     private No<T> inicio;
     private No<T> fim;
@@ -41,20 +46,50 @@ public class ListaDuplamenteLigada<T> implements ListaDuplamenteLigada1<T>, Iter
         this.tamanho = tamanho;
     }
 
+    // Métodos obrigatórios do AbstractList / java.util.List
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+    public int size() {
+        return tamanho;
+    }
+
+    @Override
+    public T get(int index) {
+        return obter(index);
+    }
+
+    @Override
+    public T set(int index, T element) {
+        if (index < 0 || index >= tamanho) {
+            throw new IndexOutOfBoundsException("Índice: " + index + ", Tamanho: " + tamanho);
         }
-        ListaDuplamenteLigada<?> that = (ListaDuplamenteLigada<?>) o;
-        return getTamanho() == that.getTamanho() && Objects.equals(getInicio(), that.getInicio()) && Objects.equals(getFim(), that.getFim());
+        No<T> atual = obterNo(index);
+        T antigo = atual.getValor();
+        atual.setValor(element);
+        return antigo;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getInicio(), getFim(), getTamanho());
+    public void add(int index, T element) {
+        inserir(index, element);
     }
 
+    @Override
+    public T remove(int index) {
+        return remover(index);
+    }
+
+    @Override
+    public void clear() {
+        limpar();
+    }
+
+    @Override
+    public boolean add(T t) {
+        inserirFim(t);
+        return true;
+    }
+
+    // Métodos da Interface ListaDuplamenteLigada1
     @Override
     public void inserirInicio(T t) {
         No<T> no = new No<>(t);
@@ -73,135 +108,133 @@ public class ListaDuplamenteLigada<T> implements ListaDuplamenteLigada1<T>, Iter
     public void inserirFim(T t) {
         No<T> no = new No<>(t);
         if (inicio == null) {
-            fim = no;
             inicio = no;
+            fim = no;
         } else {
             fim.setPosterior(no);
             no.setAnterior(fim);
             fim = no;
         }
         tamanho++;
-
     }
 
     @Override
     public void inserir(int posicao, T t) {
-        No<T> atual = inicio;
-        No<T> no = new No<>(t);
-        if ((posicao < 0) || (posicao > tamanho)) {
-            throw new IndexOutOfBoundsException();
+        if (posicao < 0 || posicao > tamanho) {
+            throw new IndexOutOfBoundsException("Posição: " + posicao + ", Tamanho: " + tamanho);
         }
-        if (posicao == tamanho) {
-            inserirFim(t);
-        } else if (posicao == 0) {
+        if (posicao == 0) {
             inserirInicio(t);
+        } else if (posicao == tamanho) {
+            inserirFim(t);
         } else {
-            for (int i = 0; i < posicao; i++) {
-                atual = atual.getPosterior();
-            }
+            No<T> atual = obterNo(posicao);
+            No<T> novo = new No<>(t);
             No<T> anterior = atual.getAnterior();
-            anterior.setPosterior(no);
-            no.setAnterior(anterior);
-            atual.setAnterior(no);
-            no.setPosterior(atual);
+
+            anterior.setPosterior(novo);
+            novo.setAnterior(anterior);
+            novo.setPosterior(atual);
+            atual.setAnterior(novo);
             tamanho++;
         }
     }
 
     @Override
     public T removerInicio() {
-        if (inicio == null) {
-            return null;
-        }
-
+        if (inicio == null) return null;
         T elemento = inicio.getValor();
-        if (tamanho == 0) {
+        if (inicio == fim) {
             inicio = null;
             fim = null;
         } else {
             inicio = inicio.getPosterior();
             inicio.setAnterior(null);
-            tamanho--;
         }
+        tamanho--;
         return elemento;
     }
 
     @Override
     public T removerFim() {
-        if (inicio == null) {
-            return null;
-        }
+        if (fim == null) return null;
         T elemento = fim.getValor();
-        if (tamanho == 0) {
+        if (inicio == fim) {
             inicio = null;
             fim = null;
         } else {
             fim = fim.getAnterior();
             fim.setPosterior(null);
-            tamanho--;
         }
+        tamanho--;
         return elemento;
     }
 
     @Override
     public T remover(int posicao) {
-        No<T> atual = inicio;
-        if ((posicao < 0) || (posicao >= tamanho)) {
-            throw new IndexOutOfBoundsException();
+        if (posicao < 0 || posicao >= tamanho) {
+            throw new IndexOutOfBoundsException("Posição: " + posicao + ", Tamanho: " + tamanho);
         }
-        if (posicao == tamanho - 1) {
-            return removerFim();
-        } else if (posicao == 0) {
+        if (posicao == 0) {
             return removerInicio();
+        } else if (posicao == tamanho - 1) {
+            return removerFim();
         } else {
-            for (int i = 0; i < posicao; i++) {
-                atual = atual.getPosterior();
-            }
+            No<T> atual = obterNo(posicao);
             T elemento = atual.getValor();
-            No<T> posteiror = atual.getPosterior();
             No<T> anterior = atual.getAnterior();
-            posteiror.setAnterior(anterior);
-            anterior.setPosterior(posteiror);
+            No<T> posterior = atual.getPosterior();
+
+            anterior.setPosterior(posterior);
+            posterior.setAnterior(anterior);
             tamanho--;
             return elemento;
         }
-
     }
 
     @Override
     public T pesquisar(T t) {
-
         No<T> atual = inicio;
-
         while (atual != null) {
-
-            if (atual.getValor().equals(t)) {
+            if (Objects.equals(atual.getValor(), t)) {
                 return atual.getValor();
             }
-
             atual = atual.getPosterior();
         }
-
         return null;
     }
 
     @Override
     public T obter(int posicao) {
-        No<T> atual = inicio;
-        if ((posicao < 0) || (posicao > tamanho)) {
-            throw new IndexOutOfBoundsException();
+        if (posicao < 0 || posicao >= tamanho) {
+            throw new IndexOutOfBoundsException("Posição: " + posicao + ", Tamanho: " + tamanho);
         }
-        if (posicao == tamanho) {
-            return fim.getValor();
-        } else if (posicao == 0) {
-            return inicio.getValor();
-        } else {
+        return obterNo(posicao).getValor();
+    }
+
+    /**
+     * Otimização de navegação duplamente ligada:
+     * Se a posição estiver na primeira metade, navega a partir do início.
+     * Se estiver na segunda metade, navega a partir do fim!
+     */
+    private No<T> obterNo(int posicao) {
+        if (posicao < 0 || posicao >= tamanho) {
+            throw new IndexOutOfBoundsException("Posição: " + posicao + ", Tamanho: " + tamanho);
+        }
+
+        if (posicao < (tamanho / 2)) {
+            No<T> atual = inicio;
             for (int i = 0; i < posicao; i++) {
                 atual = atual.getPosterior();
             }
-            return atual.getValor();
+            return atual;
+        } else {
+            No<T> atual = fim;
+            for (int i = tamanho - 1; i > posicao; i--) {
+                atual = atual.getAnterior();
+            }
+            return atual;
         }
-
     }
 
     @Override
@@ -211,40 +244,31 @@ public class ListaDuplamenteLigada<T> implements ListaDuplamenteLigada1<T>, Iter
 
     @Override
     public boolean estaVazia() {
-        return inicio == null;
+        return tamanho == 0;
     }
 
     @Override
     public void actualizar(int posicao, T t) {
-        No<T> atual = inicio;
-        if ((posicao < 0) || (posicao > tamanho)) {
-            throw new IndexOutOfBoundsException();
+        if (posicao < 0 || posicao >= tamanho) {
+            throw new IndexOutOfBoundsException("Posição: " + posicao + ", Tamanho: " + tamanho);
         }
-        if (posicao == tamanho) {
-            fim.setValor(t);
-        } else if (posicao == 0) {
-            inicio.setValor(t);
-        } else {
-            for (int i = 0; i < posicao; i++) {
-                atual = atual.getPosterior();
-            }
-            atual.setValor(t);
-        }
+        obterNo(posicao).setValor(t);
     }
 
     @Override
     public void inverter() {
         No<T> atual = inicio;
-        No<T> temporario = null;
+        No<T> temp = null;
         while (atual != null) {
-            temporario = atual.getAnterior();
+            temp = atual.getAnterior();
             atual.setAnterior(atual.getPosterior());
-            atual.setPosterior(temporario);
+            atual.setPosterior(temp);
             atual = atual.getAnterior();
         }
-        temporario = inicio;
-        inicio = fim;
-        fim = temporario;
+        if (temp != null) {
+            fim = inicio;
+            inicio = temp.getAnterior();
+        }
     }
 
     @Override
@@ -254,11 +278,51 @@ public class ListaDuplamenteLigada<T> implements ListaDuplamenteLigada1<T>, Iter
         tamanho = 0;
     }
 
+    /**
+     * Algoritmo de Ordenação na Lista Duplamente Ligada (Bubble Sort de nós).
+     */
+    public void ordenar(Comparator<? super T> comparator) {
+        if (tamanho <= 1) return;
+        boolean trocou;
+        do {
+            trocou = false;
+            No<T> atual = inicio;
+            while (atual != null && atual.getPosterior() != null) {
+                if (comparator.compare(atual.getValor(), atual.getPosterior().getValor()) > 0) {
+                    T temp = atual.getValor();
+                    atual.setValor(atual.getPosterior().getValor());
+                    atual.getPosterior().setValor(temp);
+                    trocou = true;
+                }
+                atual = atual.getPosterior();
+            }
+        } while (trocou);
+    }
+
+    /**
+     * Filtragem funcional retornando nova ListaDuplamenteLigada.
+     */
+    public ListaDuplamenteLigada<T> filtrar(Predicate<? super T> predicate) {
+        ListaDuplamenteLigada<T> resultado = new ListaDuplamenteLigada<>();
+        for (T item : this) {
+            if (predicate.test(item)) {
+                resultado.inserirFim(item);
+            }
+        }
+        return resultado;
+    }
+
+    /**
+     * Retorna visualização ObservableList para TableView do JavaFX
+     * suportada 100% diretamente por esta ListaDuplamenteLigada.
+     */
+    public ObservableList<T> asObservableList() {
+        return FXCollections.observableList(this);
+    }
+
     @Override
     public Iterator<T> iterator() {
-
         return new Iterator<T>() {
-
             private No<T> atual = inicio;
 
             @Override
@@ -268,16 +332,108 @@ public class ListaDuplamenteLigada<T> implements ListaDuplamenteLigada1<T>, Iter
 
             @Override
             public T next() {
-
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-
                 T valor = atual.getValor();
-
                 atual = atual.getPosterior();
-
                 return valor;
+            }
+        };
+    }
+
+    @Override
+    public ListIterator<T> listIterator(int index) {
+        if (index < 0 || index > tamanho) {
+            throw new IndexOutOfBoundsException("Índice: " + index + ", Tamanho: " + tamanho);
+        }
+
+        return new ListIterator<T>() {
+            private No<T> proximoNo = (index == tamanho) ? null : obterNo(index);
+            private No<T> ultimoRetornado = null;
+            private int proximoIndice = index;
+
+            @Override
+            public boolean hasNext() {
+                return proximoIndice < tamanho;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) throw new NoSuchElementException();
+                ultimoRetornado = proximoNo;
+                T valor = proximoNo.getValor();
+                proximoNo = proximoNo.getPosterior();
+                proximoIndice++;
+                return valor;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return proximoIndice > 0;
+            }
+
+            @Override
+            public T previous() {
+                if (!hasPrevious()) throw new NoSuchElementException();
+                if (proximoNo == null) {
+                    proximoNo = fim;
+                } else {
+                    proximoNo = proximoNo.getAnterior();
+                }
+                ultimoRetornado = proximoNo;
+                proximoIndice--;
+                return ultimoRetornado.getValor();
+            }
+
+            @Override
+            public int nextIndex() {
+                return proximoIndice;
+            }
+
+            @Override
+            public int previousIndex() {
+                return proximoIndice - 1;
+            }
+
+            @Override
+            public void remove() {
+                if (ultimoRetornado == null) throw new IllegalStateException();
+                No<T> anterior = ultimoRetornado.getAnterior();
+                No<T> posterior = ultimoRetornado.getPosterior();
+
+                if (anterior == null) {
+                    inicio = posterior;
+                } else {
+                    anterior.setPosterior(posterior);
+                }
+
+                if (posterior == null) {
+                    fim = anterior;
+                } else {
+                    posterior.setAnterior(anterior);
+                }
+
+                tamanho--;
+                if (proximoNo == ultimoRetornado) {
+                    proximoNo = posterior;
+                } else {
+                    proximoIndice--;
+                }
+                ultimoRetornado = null;
+            }
+
+            @Override
+            public void set(T t) {
+                if (ultimoRetornado == null) throw new IllegalStateException();
+                ultimoRetornado.setValor(t);
+            }
+
+            @Override
+            public void add(T t) {
+                inserir(proximoIndice, t);
+                proximoIndice++;
+                ultimoRetornado = null;
             }
         };
     }

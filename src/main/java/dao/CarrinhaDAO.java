@@ -84,27 +84,20 @@ public class CarrinhaDAO {
     }
     
     public boolean remove(Carrinha carrinha) {
-        
         Transaction transaction = null;
-        
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            
             transaction = session.beginTransaction();
-            
-            if (session.contains(carrinha)) {
-                
-                session.remove(carrinha);
-                
+            Carrinha entity = session.find(Carrinha.class, carrinha.getId());
+            if (entity != null) {
+                session.remove(entity);
                 transaction.commit();
-                
                 return true;
             }
-            
+            if (transaction != null) transaction.rollback();
             return false;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             throw e;
         }
-        
     }
 }

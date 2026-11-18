@@ -1,6 +1,7 @@
 
 package dao;
 
+import dataStructure.ListaDuplamenteLigada;
 import java.util.List;
 import model.Mercadoria;
 import org.hibernate.Session;
@@ -45,12 +46,17 @@ public class MercadoriaDAO {
         }
     }
     
-    public List<Mercadoria> findAll() {
+    public ListaDuplamenteLigada<Mercadoria> findAll() {
+        ListaDuplamenteLigada<Mercadoria> lista = new ListaDuplamenteLigada<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
+            List<Mercadoria> resultados = session.createQuery(
                     "FROM Mercadoria ORDER BY descricao",
                     Mercadoria.class
             ).getResultList();
+            for (Mercadoria m : resultados) {
+                lista.inserirFim(m);
+            }
+            return lista;
         } catch (Exception e) {
             throw e;
         }

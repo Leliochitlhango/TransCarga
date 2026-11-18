@@ -16,22 +16,18 @@ import javafx.stage.Stage;
 
 public class LoginViewController {
 
-    // Credenciais do utilizador único do sistema
     public static final String USUARIO_VALIDO = "admin";
     public static final String USUARIO_EMAIL_VALIDO = "admin@transcarga.co.mz";
     public static final String SENHA_VALIDA = "transcarga2026";
 
-    @FXML
-    private Button btnEntrar;
+    // Variável estática para persistir estado do tema entre telas
+    public static boolean modoEscuroAtivo = false;
 
-    @FXML
-    private Label lblErro;
-
-    @FXML
-    private PasswordField txtSenha;
-
-    @FXML
-    private TextField txtUsuario;
+    @FXML private Button btnEntrar;
+    @FXML private Button btnTemaLogin;
+    @FXML private Label lblErro;
+    @FXML private PasswordField txtSenha;
+    @FXML private TextField txtUsuario;
 
     @FXML
     public void initialize() {
@@ -39,7 +35,6 @@ public class LoginViewController {
             lblErro.setText("");
         }
 
-        // Eventos para remover estilo de erro ao digitar
         if (txtUsuario != null) {
             txtUsuario.textProperty().addListener((obs, oldVal, newVal) -> {
                 txtUsuario.getStyleClass().remove("campo-erro");
@@ -56,6 +51,38 @@ public class LoginViewController {
                 if (lblErro != null) lblErro.setText("");
             });
             txtSenha.setOnAction(this::entrar);
+        }
+    }
+
+    @FXML
+    void alternarTemaLogin(ActionEvent event) {
+        Scene scene = btnTemaLogin.getScene();
+        if (scene == null) return;
+
+        modoEscuroAtivo = !modoEscuroAtivo;
+        aplicarTema(scene, modoEscuroAtivo);
+
+        if (btnTemaLogin != null) {
+            btnTemaLogin.setText(modoEscuroAtivo ? "☀️ Modo Claro" : "🌙 Modo Escuro");
+        }
+    }
+
+    public static void aplicarTema(Scene scene, boolean escuro) {
+        if (scene == null) return;
+        String caminhoTemaEscuro = LoginViewController.class.getResource("/css/tema-escuro.css").toExternalForm();
+
+        if (escuro) {
+            if (!scene.getStylesheets().contains(caminhoTemaEscuro)) {
+                scene.getStylesheets().add(caminhoTemaEscuro);
+            }
+            if (scene.getRoot() != null && !scene.getRoot().getStyleClass().contains("modo-escuro")) {
+                scene.getRoot().getStyleClass().add("modo-escuro");
+            }
+        } else {
+            scene.getStylesheets().remove(caminhoTemaEscuro);
+            if (scene.getRoot() != null) {
+                scene.getRoot().getStyleClass().remove("modo-escuro");
+            }
         }
     }
 
@@ -82,11 +109,8 @@ public class LoginViewController {
             erro = true;
         }
 
-        if (erro) {
-            return;
-        }
+        if (erro) return;
 
-        // Validação das credenciais do utilizador único
         boolean usuarioCorreto = usuario.equalsIgnoreCase(USUARIO_VALIDO) 
                               || usuario.equalsIgnoreCase(USUARIO_EMAIL_VALIDO)
                               || usuario.equalsIgnoreCase("lelio");
@@ -116,7 +140,11 @@ public class LoginViewController {
             }
 
             if (stage != null) {
-                stage.setScene(new Scene(root));
+                Scene novaCena = new Scene(root);
+                if (modoEscuroAtivo) {
+                    aplicarTema(novaCena, true);
+                }
+                stage.setScene(novaCena);
                 stage.setTitle("TransCarga Moçambique - Gestão de Frotas");
                 stage.centerOnScreen();
                 stage.show();

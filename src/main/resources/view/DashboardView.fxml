@@ -8,8 +8,6 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -42,11 +40,7 @@
                         <Label styleClass="card-destaque-titulo" text="Veículo do mês" />
                         <StackPane styleClass="kpi-icone">
                            <children>
-                              <ImageView fitHeight="26.0" fitWidth="26.0" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../Icones/ded851f6070fc383c2e19e79619e0004.jpg" />
-                                 </image>
-                              </ImageView>
+                              <Label styleClass="kpi-emoji" style="-fx-font-size: 26px;" text="🏆" />
                            </children>
                         </StackPane>
                         <Label fx:id="lblVeiculoMesMatricula" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="—" />
@@ -79,11 +73,7 @@
                               </VBox>
                               <StackPane styleClass="kpi-icone">
                                  <children>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../Icones/ded851f6070fc383c2e19e79619e0004.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <Label styleClass="kpi-emoji" text="🚚" />
                                  </children>
                               </StackPane>
                            </children>
@@ -101,11 +91,7 @@
                               </VBox>
                               <StackPane styleClass="kpi-icone">
                                  <children>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../Icones/b548eae4e34db001b7805a90ee501ca3.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <Label styleClass="kpi-emoji" text="👥" />
                                  </children>
                               </StackPane>
                            </children>
@@ -123,11 +109,7 @@
                               </VBox>
                               <StackPane styleClass="kpi-icone">
                                  <children>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../Icones/n.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <Label styleClass="kpi-emoji" text="🤝" />
                                  </children>
                               </StackPane>
                            </children>
@@ -145,11 +127,7 @@
                               </VBox>
                               <StackPane styleClass="kpi-icone">
                                  <children>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../Icones/48600497fa4b3efc40f2cac2553ea204.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <Label styleClass="kpi-emoji" text="📦" />
                                  </children>
                               </StackPane>
                            </children>
@@ -167,11 +145,7 @@
                               </VBox>
                               <StackPane styleClass="kpi-icone">
                                  <children>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../Icones/b5fe1e30301742e01e3ddb9df377ddbf.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <Label styleClass="kpi-emoji" text="⚖️" />
                                  </children>
                               </StackPane>
                            </children>
@@ -189,7 +163,7 @@
                               </VBox>
                               <StackPane styleClass="kpi-icone">
                                  <children>
-                                    <Label style="-fx-font-size: 16px; -fx-text-fill: white; -fx-font-weight: bold;" text="MZN" />
+                                    <Label styleClass="kpi-emoji" text="💰" />
                                  </children>
                               </StackPane>
                            </children>

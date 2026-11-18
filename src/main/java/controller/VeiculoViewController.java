@@ -2,40 +2,66 @@ package controller;
 
 import dao.CamiaoDAO;
 import dao.CarrinhaDAO;
+import dao.CarregamentoDAO;
 import dao.ProprietarioDAO;
 import dataStructure.ListaDuplamenteLigada;
+import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import model.Camiao;
 import model.Carrinha;
+import model.Carregamento;
 import model.Proprietario;
 import model.Veiculo;
+import util.Validador;
 
 public class VeiculoViewController {
 
+    public static final String APLICACAO_MERCADORIA = "Transporte de Mercadoria";
+    public static final String APLICACAO_PASSAGEIROS = "Transporte de Passageiros";
+
+    private final ListaDuplamenteLigada<Veiculo> dadosTabela = new ListaDuplamenteLigada<>();
     private ListaDuplamenteLigada<Camiao> camioes;
     private ListaDuplamenteLigada<Carrinha> carrinhas;
     private ListaDuplamenteLigada<Proprietario> proprietarios;
-
-    private final ObservableList<Veiculo> dadosTabela = FXCollections.observableArrayList();
+    private ListaDuplamenteLigada<Carregamento> todosCarregamentos;
 
     @FXML private Button btnActualizar;
+    @FXML private Button btnEliminar;
     @FXML private Button btnGuardar;
     @FXML private Button btnLimpar;
+    @FXML private Button btnFiltroTodos;
+    @FXML private Button btnFiltroMercadoria;
+    @FXML private Button btnFiltroPassageiros;
 
+    @FXML private ComboBox<String> cbAplicacao;
     @FXML private ComboBox<String> cbProprietario;
-    @FXML private ComboBox<String> cbTipo;
+
+    @FXML private TextField txtMatricula;
+    @FXML private TextField txtDocumento;
+
+    @FXML private VBox boxMercadoria;
+    @FXML private TextField txtCapacidadeCarga;
+    @FXML private TextField txtTipoMercadoria;
+
+    @FXML private VBox boxPassageiros;
+    @FXML private TextField txtPassageiros;
+    @FXML private TextField txtTipoCarroceria;
+
+    @FXML private Label lblMensagem;
+    @FXML private Label lblTotalFrota;
+    @FXML private Label lblResumoTabela;
 
     @FXML private TableView<Veiculo> tabela;
     @FXML private TableColumn<Veiculo, String> colCapacidade;
@@ -45,23 +71,28 @@ public class VeiculoViewController {
     @FXML private TableColumn<Veiculo, String> colProprietario;
     @FXML private TableColumn<Veiculo, String> colTipo;
 
-    @FXML private Label lblMarca;
-    @FXML private Label lblModelo;
-    @FXML private Label lblMensagem;
-
-    @FXML private TextField txtCapacidade;
-    @FXML private TextField txtMarca;
-    @FXML private TextField txtMatricula;
-    @FXML private TextField txtModelo;
+    private int veiculoIdEmEdicao = 0;
+    private String tipoVeiculoEmEdicao = ""; // "CAMIAO" ou "CARRINHA"
+    private int filtroAtual = 0; // 0: Todos, 1: Mercadoria, 2: Passageiros
 
     @FXML
     public void initialize() {
-        cbTipo.getItems().setAll("CAMIAO", "CARRINHA");
-
+        Validador.aplicarMascaraMatricula(txtMatricula);
+        configurarComboAplicacao();
         configurarEventosValidacao();
         carregarDados();
         configurarTabela();
-        preencherTabela();
+        configurarComboProprietarios();
+        aplicarFiltroTabela();
+    }
+
+    private void configurarComboAplicacao() {
+        if (cbAplicacao != null) {
+            cbAplicacao.getItems().clear();
+            cbAplicacao.getItems().addAll(APLICACAO_MERCADORIA, APLICACAO_PASSAGEIROS);
+            cbAplicacao.setValue(APLICACAO_MERCADORIA);
+            mudarAplicacao(null);
+        }
     }
 
     private void carregarDados() {
@@ -69,63 +100,148 @@ public class VeiculoViewController {
             camioes = new CamiaoDAO().findAll();
             carrinhas = new CarrinhaDAO().findAll();
             proprietarios = new ProprietarioDAO().findAll();
+            todosCarregamentos = new CarregamentoDAO().findAll();
 
-            cbProprietario.getItems().clear();
-            if (proprietarios != null) {
-                for (Proprietario p : proprietarios) {
-                    if (p != null && p.getNome() != null) {
-                        cbProprietario.getItems().add(p.getNome());
-                    }
-                }
+            if (camioes != null) {
+                camioes.ordenar((c1, c2) -> Integer.compare(c1.getCapacidadeCarga(), c2.getCapacidadeCarga()));
+            }
+            if (carrinhas != null) {
+                carrinhas.ordenar((c1, c2) -> Integer.compare(c1.getCapacidadeCarga(), c2.getCapacidadeCarga()));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void configurarComboProprietarios() {
+        if (cbProprietario == null) return;
+        cbProprietario.getItems().clear();
+        if (proprietarios != null) {
+            for (Proprietario p : proprietarios) {
+                if (p != null && p.getNome() != null) {
+                    cbProprietario.getItems().add(p.getNome());
+                }
+            }
+        }
+    }
+
     private void configurarEventosValidacao() {
         if (txtMatricula != null) {
             txtMatricula.textProperty().addListener((obs, oldVal, newVal) -> {
-                txtMatricula.getStyleClass().remove("campo-erro");
-                limparMensagemSeContem("matrícula");
+                verificarMatriculaEmTempoReal();
             });
+        }
+        if (txtDocumento != null) {
+            txtDocumento.textProperty().addListener((obs, oldVal, newVal) -> {
+                verificarDocumentoEmTempoReal();
+            });
+        }
+    }
+
+    @FXML
+    void mudarAplicacao(ActionEvent event) {
+        String selecionado = cbAplicacao != null ? cbAplicacao.getValue() : APLICACAO_MERCADORIA;
+        boolean isPassageiros = APLICACAO_PASSAGEIROS.equals(selecionado);
+
+        if (boxMercadoria != null) {
+            boxMercadoria.setVisible(!isPassageiros);
+            boxMercadoria.setManaged(!isPassageiros);
+        }
+        if (boxPassageiros != null) {
+            boxPassageiros.setVisible(isPassageiros);
+            boxPassageiros.setManaged(isPassageiros);
+        }
+    }
+
+    private void verificarMatriculaEmTempoReal() {
+        if (txtMatricula == null) return;
+        String mat = txtMatricula.getText() != null ? txtMatricula.getText().trim().toUpperCase() : "";
+
+        if (mat.isEmpty()) {
+            txtMatricula.getStyleClass().remove("campo-erro");
+            limparMensagemSeContem("matrícula");
+            return;
         }
 
-        if (txtCapacidade != null) {
-            txtCapacidade.textProperty().addListener((obs, oldVal, newVal) -> {
-                txtCapacidade.getStyleClass().remove("campo-erro");
-                limparMensagemSeContem("capacidade");
-            });
+        Veiculo dup = encontrarVeiculoPorMatricula(mat);
+        if (dup != null && dup.getId() != veiculoIdEmEdicao) {
+            marcarErro(txtMatricula, "⚠️ Esta matrícula já se encontra registada para outro veículo!");
+            return;
         }
 
-        if (txtMarca != null) {
-            txtMarca.textProperty().addListener((obs, oldVal, newVal) -> {
-                txtMarca.getStyleClass().remove("campo-erro");
-                limparMensagemSeContem("documento");
-            });
+        if (mat.length() >= 10 && !Validador.isMatriculaValida(mat)) {
+            marcarErro(txtMatricula, "Matrícula inválida. Formato moçambicano: AAA-000-XX (ex: ABC-123-MP).");
+            return;
         }
 
-        if (txtModelo != null) {
-            txtModelo.textProperty().addListener((obs, oldVal, newVal) -> {
-                txtModelo.getStyleClass().remove("campo-erro");
-                limparMensagemSeContem("mercadoria");
-                limparMensagemSeContem("passageiros");
-            });
+        txtMatricula.getStyleClass().remove("campo-erro");
+        limparMensagemSeContem("matrícula");
+    }
+
+    private void verificarDocumentoEmTempoReal() {
+        if (txtDocumento == null) return;
+        String doc = txtDocumento.getText() != null ? txtDocumento.getText().trim().toUpperCase() : "";
+
+        if (doc.isEmpty()) {
+            txtDocumento.getStyleClass().remove("campo-erro");
+            limparMensagemSeContem("chassi");
+            return;
         }
 
-        if (cbTipo != null) {
-            cbTipo.valueProperty().addListener((obs, oldVal, newVal) -> {
-                cbTipo.getStyleClass().remove("campo-erro");
-                mudarTipoVeiculo(null);
-            });
+        Veiculo dup = encontrarVeiculoPorDocumento(doc);
+        if (dup != null && dup.getId() != veiculoIdEmEdicao) {
+            marcarErro(txtDocumento, "⚠️ Este documento/chassi já se encontra registado para outro veículo!");
+            return;
         }
 
-        if (cbProprietario != null) {
-            cbProprietario.valueProperty().addListener((obs, oldVal, newVal) -> {
-                cbProprietario.getStyleClass().remove("campo-erro");
-                limparMensagemSeContem("proprietário");
-            });
+        txtDocumento.getStyleClass().remove("campo-erro");
+        limparMensagemSeContem("chassi");
+    }
+
+    private Veiculo encontrarVeiculoPorMatricula(String mat) {
+        if (mat == null) return null;
+        String matLimpa = mat.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
+
+        if (camioes != null) {
+            for (Camiao c : camioes) {
+                if (c != null && c.getMatricula() != null) {
+                    String cMat = c.getMatricula().replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
+                    if (!cMat.isEmpty() && cMat.equals(matLimpa)) return c;
+                }
+            }
         }
+        if (carrinhas != null) {
+            for (Carrinha c : carrinhas) {
+                if (c != null && c.getMatricula() != null) {
+                    String cMat = c.getMatricula().replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
+                    if (!cMat.isEmpty() && cMat.equals(matLimpa)) return c;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Veiculo encontrarVeiculoPorDocumento(String doc) {
+        if (doc == null) return null;
+        String docLimpo = doc.replaceAll("\\s", "").toUpperCase();
+
+        if (camioes != null) {
+            for (Camiao c : camioes) {
+                if (c != null && c.getDocumentoIdentifcacao() != null) {
+                    String cDoc = c.getDocumentoIdentifcacao().replaceAll("\\s", "").toUpperCase();
+                    if (!cDoc.isEmpty() && cDoc.equals(docLimpo)) return c;
+                }
+            }
+        }
+        if (carrinhas != null) {
+            for (Carrinha c : carrinhas) {
+                if (c != null && c.getDocumentoIdentifcacao() != null) {
+                    String cDoc = c.getDocumentoIdentifcacao().replaceAll("\\s", "").toUpperCase();
+                    if (!cDoc.isEmpty() && cDoc.equals(docLimpo)) return c;
+                }
+            }
+        }
+        return null;
     }
 
     private void limparMensagemSeContem(String termo) {
@@ -134,7 +250,7 @@ public class VeiculoViewController {
         }
     }
 
-    private void marcarErro(javafx.scene.Node campo, String mensagem) {
+    private void marcarErro(TextField campo, String mensagem) {
         if (campo != null && !campo.getStyleClass().contains("campo-erro")) {
             campo.getStyleClass().add("campo-erro");
         }
@@ -146,288 +262,396 @@ public class VeiculoViewController {
     private boolean validarCampos() {
         boolean temErro = false;
 
-        String tipo = cbTipo.getValue();
-        if (tipo == null || tipo.trim().isEmpty()) {
-            marcarErro(cbTipo, "Seleccione o tipo de veículo (Camião ou Carrinha).");
+        String mat = txtMatricula.getText() != null ? txtMatricula.getText().trim().toUpperCase() : "";
+        String doc = txtDocumento.getText() != null ? txtDocumento.getText().trim().toUpperCase() : "";
+        String propNome = cbProprietario.getValue();
+        String aplicacao = cbAplicacao.getValue();
+
+        if (aplicacao == null) {
+            if (lblMensagem != null) lblMensagem.setText("Seleccione a aplicação do veículo.");
             temErro = true;
         }
 
-        String matricula = txtMatricula.getText() != null ? txtMatricula.getText().trim() : "";
-        if (matricula.isEmpty()) {
-            marcarErro(txtMatricula, "Por favor, introduza a matrícula do veículo.");
+        if (mat.isEmpty()) {
+            marcarErro(txtMatricula, "Por favor, introduza a matrícula.");
             temErro = true;
-        }
-
-        String marca = txtMarca.getText() != null ? txtMarca.getText().trim() : "";
-        if (marca.isEmpty()) {
-            marcarErro(txtMarca, "Por favor, introduza o documento de identificação/marca.");
-            temErro = true;
-        }
-
-        String capacidadeStr = txtCapacidade.getText() != null ? txtCapacidade.getText().trim() : "";
-        if (capacidadeStr.isEmpty()) {
-            marcarErro(txtCapacidade, "Por favor, introduza a capacidade de carga.");
+        } else if (!Validador.isMatriculaValida(mat)) {
+            marcarErro(txtMatricula, "Matrícula inválida! Formato moçambicano esperado: AAA-000-XX (ex: ABC-123-MP).");
             temErro = true;
         } else {
-            try {
-                int cap = Integer.parseInt(capacidadeStr);
-                if (cap <= 0) {
-                    marcarErro(txtCapacidade, "A capacidade deve ser maior que zero.");
-                    temErro = true;
-                }
-            } catch (NumberFormatException e) {
-                marcarErro(txtCapacidade, "Capacidade inválida. Introduza apenas números inteiros.");
+            Veiculo dup = encontrarVeiculoPorMatricula(mat);
+            if (dup != null && dup.getId() != veiculoIdEmEdicao) {
+                marcarErro(txtMatricula, "⚠️ Esta matrícula já se encontra registada!");
                 temErro = true;
             }
         }
 
-        String modelo = txtModelo.getText() != null ? txtModelo.getText().trim() : "";
-        if ("CARRINHA".equals(tipo)) {
-            if (modelo.isEmpty()) {
-                marcarErro(txtModelo, "Introduza o número de passageiros.");
+        if (doc.isEmpty()) {
+            marcarErro(txtDocumento, "Por favor, introduza o chassi ou documento de identificação.");
+            temErro = true;
+        } else {
+            Veiculo dup = encontrarVeiculoPorDocumento(doc);
+            if (dup != null && dup.getId() != veiculoIdEmEdicao) {
+                marcarErro(txtDocumento, "⚠️ Este número de chassi já pertence a outro veículo!");
+                temErro = true;
+            }
+        }
+
+        if (APLICACAO_PASSAGEIROS.equals(aplicacao)) {
+            String passStr = txtPassageiros.getText() != null ? txtPassageiros.getText().trim() : "";
+            if (passStr.isEmpty()) {
+                marcarErro(txtPassageiros, "Por favor, introduza o total de passageiros (lotação).");
                 temErro = true;
             } else {
                 try {
-                    int pass = Integer.parseInt(modelo);
-                    if (pass < 0) {
-                        marcarErro(txtModelo, "Número de passageiros não pode ser negativo.");
+                    int p = Integer.parseInt(passStr);
+                    if (p <= 0) {
+                        marcarErro(txtPassageiros, "A lotação deve ser maior que zero.");
                         temErro = true;
                     }
                 } catch (NumberFormatException e) {
-                    marcarErro(txtModelo, "Número de passageiros inválido. Introduza apenas números.");
+                    marcarErro(txtPassageiros, "O total de passageiros deve ser um número inteiro.");
                     temErro = true;
                 }
             }
-        } else if ("CAMIAO".equals(tipo)) {
-            if (modelo.isEmpty()) {
-                marcarErro(txtModelo, "Introduza o tipo de mercadoria suportada.");
+        } else {
+            String capStr = txtCapacidadeCarga.getText() != null ? txtCapacidadeCarga.getText().trim() : "";
+            if (capStr.isEmpty()) {
+                marcarErro(txtCapacidadeCarga, "Por favor, introduza a capacidade de carga em toneladas.");
                 temErro = true;
+            } else {
+                try {
+                    int cap = Integer.parseInt(capStr);
+                    if (cap <= 0) {
+                        marcarErro(txtCapacidadeCarga, "A capacidade de carga deve ser superior a zero.");
+                        temErro = true;
+                    }
+                } catch (NumberFormatException e) {
+                    marcarErro(txtCapacidadeCarga, "Capacidade deve ser um número inteiro de toneladas.");
+                    temErro = true;
+                }
             }
         }
 
-        if (cbProprietario.getValue() == null || cbProprietario.getValue().trim().isEmpty()) {
-            marcarErro(cbProprietario, "Seleccione o proprietário do veículo.");
+        if (propNome == null || propNome.trim().isEmpty()) {
+            if (lblMensagem != null) lblMensagem.setText("Por favor, seleccione o proprietário do veículo.");
             temErro = true;
         }
 
         return !temErro;
     }
 
-    private Proprietario encontrarProprietario(String nome) {
-        if (proprietarios != null && nome != null) {
-            for (Proprietario p : proprietarios) {
-                if (p != null && nome.equals(p.getNome())) {
-                    return p;
-                }
-            }
+    private Proprietario buscarProprietarioSelecionado() {
+        String nome = cbProprietario.getValue();
+        if (nome == null || proprietarios == null) return null;
+        for (Proprietario p : proprietarios) {
+            if (p != null && nome.equals(p.getNome())) return p;
         }
         return null;
     }
 
     @FXML
     void guardar(ActionEvent event) {
+        veiculoIdEmEdicao = 0;
         if (!validarCampos()) return;
 
-        String tipo = cbTipo.getValue();
-        Proprietario prop = encontrarProprietario(cbProprietario.getValue());
-        int cap = Integer.parseInt(txtCapacidade.getText().trim());
-
         try {
-            if ("CAMIAO".equals(tipo)) {
-                Camiao c = new Camiao();
-                c.setMatricula(txtMatricula.getText().trim());
-                c.setDocumentoIdentifcacao(txtMarca.getText().trim());
-                c.setProprietario(prop);
-                c.setCapacidadeCarga(cap);
-                c.setTipoMercadoria(txtModelo.getText().trim());
-                c.setNumeroEixos("4");
+            Proprietario p = buscarProprietarioSelecionado();
+            String mat = txtMatricula.getText().trim().toUpperCase();
+            String doc = txtDocumento.getText().trim().toUpperCase();
+            String aplicacao = cbAplicacao.getValue();
 
-                new CamiaoDAO().save(c);
-                new Alert(Alert.AlertType.INFORMATION, "Camião registado com sucesso!").showAndWait();
+            if (APLICACAO_PASSAGEIROS.equals(aplicacao)) {
+                Carrinha carrinha = new Carrinha();
+                carrinha.setMatricula(mat);
+                carrinha.setDocumentoIdentifcacao(doc);
+                int passageiros = Integer.parseInt(txtPassageiros.getText().trim());
+                carrinha.setPassageiros(passageiros);
+                carrinha.setCapacidadeCarga(Math.max(1, passageiros / 10)); // estimativa em ton
+                carrinha.setTipoCarroceria(txtTipoCarroceria.getText() != null ? txtTipoCarroceria.getText().trim() : "Passageiros");
+                carrinha.setProprietario(p);
 
-            } else if ("CARRINHA".equals(tipo)) {
-                Carrinha c = new Carrinha();
-                c.setMatricula(txtMatricula.getText().trim());
-                c.setDocumentoIdentifcacao(txtMarca.getText().trim());
-                c.setProprietario(prop);
-                c.setCapacidadeCarga(cap);
-                c.setPassageiros(Integer.valueOf(txtModelo.getText().trim()));
-                c.setTipoCarroceria("Fechada");
+                new CarrinhaDAO().save(carrinha);
+            } else {
+                Camiao camiao = new Camiao();
+                camiao.setMatricula(mat);
+                camiao.setDocumentoIdentifcacao(doc);
+                int cap = Integer.parseInt(txtCapacidadeCarga.getText().trim());
+                camiao.setCapacidadeCarga(cap);
+                camiao.setTipoMercadoria(txtTipoMercadoria.getText() != null ? txtTipoMercadoria.getText().trim() : "Geral");
+                camiao.setProprietario(p);
 
-                new CarrinhaDAO().save(c);
-                new Alert(Alert.AlertType.INFORMATION, "Carrinha registada com sucesso!").showAndWait();
+                new CamiaoDAO().save(camiao);
             }
 
-            carregarDados();
-            preencherTabela();
-            limpar(null);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Veículo registado com sucesso na frota!");
+            alert.setHeaderText("Sucesso");
+            alert.showAndWait();
 
+            carregarDados();
+            aplicarFiltroTabela();
+            limpar(null);
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erro ao gravar veículo: " + e.getMessage()).showAndWait();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao guardar veículo: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 
     @FXML
     void actualizar(ActionEvent event) {
+        if (veiculoIdEmEdicao == 0) return;
         if (!validarCampos()) return;
 
-        String tipo = cbTipo.getValue();
-        Proprietario prop = encontrarProprietario(cbProprietario.getValue());
-        int cap = Integer.parseInt(txtCapacidade.getText().trim());
-
         try {
-            int id = 0;
-            if (btnActualizar.getAccessibleText() != null) {
-                id = Integer.parseInt(btnActualizar.getAccessibleText());
+            Proprietario p = buscarProprietarioSelecionado();
+            String mat = txtMatricula.getText().trim().toUpperCase();
+            String doc = txtDocumento.getText().trim().toUpperCase();
+            String aplicacao = cbAplicacao.getValue();
+
+            if (APLICACAO_PASSAGEIROS.equals(aplicacao)) {
+                Carrinha carrinha = new Carrinha();
+                carrinha.setId(veiculoIdEmEdicao);
+                carrinha.setMatricula(mat);
+                carrinha.setDocumentoIdentifcacao(doc);
+                int passageiros = Integer.parseInt(txtPassageiros.getText().trim());
+                carrinha.setPassageiros(passageiros);
+                carrinha.setCapacidadeCarga(Math.max(1, passageiros / 10));
+                carrinha.setTipoCarroceria(txtTipoCarroceria.getText() != null ? txtTipoCarroceria.getText().trim() : "Passageiros");
+                carrinha.setProprietario(p);
+
+                new CarrinhaDAO().update(carrinha);
+            } else {
+                Camiao camiao = new Camiao();
+                camiao.setId(veiculoIdEmEdicao);
+                camiao.setMatricula(mat);
+                camiao.setDocumentoIdentifcacao(doc);
+                int cap = Integer.parseInt(txtCapacidadeCarga.getText().trim());
+                camiao.setCapacidadeCarga(cap);
+                camiao.setTipoMercadoria(txtTipoMercadoria.getText() != null ? txtTipoMercadoria.getText().trim() : "Geral");
+                camiao.setProprietario(p);
+
+                new CamiaoDAO().update(camiao);
             }
 
-            if ("CAMIAO".equals(tipo)) {
-                Camiao c = new Camiao();
-                c.setId(id);
-                c.setMatricula(txtMatricula.getText().trim());
-                c.setDocumentoIdentifcacao(txtMarca.getText().trim());
-                c.setProprietario(prop);
-                c.setCapacidadeCarga(cap);
-                c.setTipoMercadoria(txtModelo.getText().trim());
-                c.setNumeroEixos("4");
-
-                new CamiaoDAO().update(c);
-                new Alert(Alert.AlertType.INFORMATION, "Camião actualizado com sucesso!").showAndWait();
-
-            } else if ("CARRINHA".equals(tipo)) {
-                Carrinha c = new Carrinha();
-                c.setId(id);
-                c.setMatricula(txtMatricula.getText().trim());
-                c.setDocumentoIdentifcacao(txtMarca.getText().trim());
-                c.setProprietario(prop);
-                c.setCapacidadeCarga(cap);
-                c.setPassageiros(Integer.valueOf(txtModelo.getText().trim()));
-                c.setTipoCarroceria("Fechada");
-
-                new CarrinhaDAO().update(c);
-                new Alert(Alert.AlertType.INFORMATION, "Carrinha actualizada com sucesso!").showAndWait();
-            }
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Dados do veículo actualizados com sucesso!");
+            alert.setHeaderText("Sucesso");
+            alert.showAndWait();
 
             carregarDados();
-            preencherTabela();
+            aplicarFiltroTabela();
             limpar(null);
-
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erro ao actualizar veículo: " + e.getMessage()).showAndWait();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao actualizar veículo: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    void eliminar(ActionEvent event) {
+        if (veiculoIdEmEdicao == 0) return;
+
+        // Verificar se há carregamentos registados para este veículo
+        if (todosCarregamentos != null) {
+            for (Carregamento c : todosCarregamentos) {
+                if (c != null && c.getVeiculo() != null && c.getVeiculo().getId() == veiculoIdEmEdicao) {
+                    Alert alertBloqueio = new Alert(Alert.AlertType.WARNING,
+                            "Não é possível eliminar este veículo pois existem viagens/carregamentos registados para ele.");
+                    alertBloqueio.setHeaderText("Operação Bloqueada");
+                    alertBloqueio.showAndWait();
+                    return;
+                }
+            }
+        }
+
+        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
+                "Tem certeza que deseja eliminar este veículo da frota?", ButtonType.YES, ButtonType.NO);
+        confirmacao.setHeaderText("Confirmação de Eliminação");
+        Optional<ButtonType> resp = confirmacao.showAndWait();
+
+        if (resp.isPresent() && resp.get() == ButtonType.YES) {
+            try {
+                boolean removido = false;
+                if ("CARRINHA".equals(tipoVeiculoEmEdicao)) {
+                    Carrinha c = new Carrinha();
+                    c.setId(veiculoIdEmEdicao);
+                    removido = new CarrinhaDAO().remove(c);
+                } else {
+                    Camiao c = new Camiao();
+                    c.setId(veiculoIdEmEdicao);
+                    removido = new CamiaoDAO().remove(c);
+                }
+
+                if (removido) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Veículo eliminado da frota com sucesso!");
+                    alert.setHeaderText("Sucesso");
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Não foi possível encontrar o veículo para remoção.");
+                    alert.setHeaderText("Erro");
+                    alert.showAndWait();
+                }
+
+                carregarDados();
+                aplicarFiltroTabela();
+                limpar(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao eliminar veículo: " + e.getMessage());
+                alert.showAndWait();
+            }
         }
     }
 
     @FXML
     void limpar(ActionEvent event) {
-        cbTipo.setValue(null);
-        txtMatricula.clear();
-        txtMarca.clear();
-        txtModelo.clear();
-        txtCapacidade.clear();
-        cbProprietario.setValue(null);
+        veiculoIdEmEdicao = 0;
+        tipoVeiculoEmEdicao = "";
+        txtMatricula.setText("");
+        txtDocumento.setText("");
+        txtCapacidadeCarga.setText("");
+        txtTipoMercadoria.setText("");
+        txtPassageiros.setText("");
+        txtTipoCarroceria.setText("");
 
-        cbTipo.getStyleClass().remove("campo-erro");
+        if (cbProprietario != null) cbProprietario.setValue(null);
+        if (cbAplicacao != null) cbAplicacao.setValue(APLICACAO_MERCADORIA);
+        mudarAplicacao(null);
+
         txtMatricula.getStyleClass().remove("campo-erro");
-        txtMarca.getStyleClass().remove("campo-erro");
-        txtModelo.getStyleClass().remove("campo-erro");
-        txtCapacidade.getStyleClass().remove("campo-erro");
-        cbProprietario.getStyleClass().remove("campo-erro");
+        txtDocumento.getStyleClass().remove("campo-erro");
+        txtCapacidadeCarga.getStyleClass().remove("campo-erro");
+        txtPassageiros.getStyleClass().remove("campo-erro");
 
         if (lblMensagem != null) lblMensagem.setText("");
-        if (btnActualizar != null) {
-            btnActualizar.setDisable(true);
-            btnActualizar.setAccessibleText(null);
-        }
+        if (btnActualizar != null) btnActualizar.setDisable(true);
+        if (btnEliminar != null) btnEliminar.setDisable(true);
     }
 
     @FXML
-    void mudarTipoVeiculo(ActionEvent event) {
-        String tipo = cbTipo.getValue();
-        if ("CAMIAO".equals(tipo)) {
-            lblMarca.setText("Doc. ID / Marca");
-            txtMarca.setPromptText("Ex.: DI-0023 / Volvo");
-            lblModelo.setText("Mercadoria");
-            txtModelo.setPromptText("Ex.: Cimento / Areia Grossa");
-        } else if ("CARRINHA".equals(tipo)) {
-            lblMarca.setText("Doc. ID / Marca");
-            txtMarca.setPromptText("Ex.: DI-0023 / Toyota");
-            lblModelo.setText("Passageiros");
-            txtModelo.setPromptText("Ex.: 15");
-        }
-    }
-
-    private void configurarTabela() {
-        colMatricula.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMatricula()));
-        colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue() instanceof Camiao ? "CAMIÃO" : "CARRINHA"));
-        colMarca.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDocumentoIdentifcacao()));
-        colModelo.setCellValueFactory(c -> {
-            Veiculo v = c.getValue();
-            if (v instanceof Camiao) {
-                return new SimpleStringProperty(((Camiao) v).getTipoMercadoria());
-            } else if (v instanceof Carrinha) {
-                return new SimpleStringProperty(((Carrinha) v).getPassageiros() + " pass.");
-            }
-            return new SimpleStringProperty("");
-        });
-        colCapacidade.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCapacidadeCarga() + " t"));
-        colProprietario.setCellValueFactory(c -> {
-            Veiculo v = c.getValue();
-            return new SimpleStringProperty(v.getProprietario() != null ? v.getProprietario().getNome() : "");
-        });
-
-        tabela.setItems(dadosTabela);
-        tabela.setOnMouseClicked(this::selecionarItem);
-    }
-
-    private void preencherTabela() {
-        dadosTabela.clear();
-        if (camioes != null) {
-            for (Camiao c : camioes) {
-                if (c != null) dadosTabela.add(c);
-            }
-        }
-        if (carrinhas != null) {
-            for (Carrinha c : carrinhas) {
-                if (c != null) dadosTabela.add(c);
-            }
-        }
-    }
-
-    private void selecionarItem(MouseEvent event) {
+    void selecionarItem(MouseEvent event) {
         if (event.getClickCount() == 2) {
             Veiculo v = tabela.getSelectionModel().getSelectedItem();
             if (v != null) {
+                veiculoIdEmEdicao = v.getId();
                 txtMatricula.setText(v.getMatricula() != null ? v.getMatricula() : "");
-                txtMarca.setText(v.getDocumentoIdentifcacao() != null ? v.getDocumentoIdentifcacao() : "");
-                txtCapacidade.setText(String.valueOf(v.getCapacidadeCarga()));
-
-                if (v instanceof Camiao) {
-                    cbTipo.setValue("CAMIAO");
-                    txtModelo.setText(((Camiao) v).getTipoMercadoria() != null ? ((Camiao) v).getTipoMercadoria() : "");
-                } else if (v instanceof Carrinha) {
-                    cbTipo.setValue("CARRINHA");
-                    txtModelo.setText(((Carrinha) v).getPassageiros() != null ? String.valueOf(((Carrinha) v).getPassageiros()) : "");
-                }
+                txtDocumento.setText(v.getDocumentoIdentifcacao() != null ? v.getDocumentoIdentifcacao() : "");
 
                 if (v.getProprietario() != null) {
                     cbProprietario.setValue(v.getProprietario().getNome());
                 }
 
-                if (btnActualizar != null) {
-                    btnActualizar.setAccessibleText(String.valueOf(v.getId()));
-                    btnActualizar.setDisable(false);
+                if (v instanceof Carrinha) {
+                    Carrinha c = (Carrinha) v;
+                    tipoVeiculoEmEdicao = "CARRINHA";
+                    cbAplicacao.setValue(APLICACAO_PASSAGEIROS);
+                    mudarAplicacao(null);
+                    txtPassageiros.setText(c.getPassageiros() != null ? String.valueOf(c.getPassageiros()) : "");
+                    txtTipoCarroceria.setText(c.getTipoCarroceria() != null ? c.getTipoCarroceria() : "");
+                } else {
+                    Camiao c = (Camiao) v;
+                    tipoVeiculoEmEdicao = "CAMIAO";
+                    cbAplicacao.setValue(APLICACAO_MERCADORIA);
+                    mudarAplicacao(null);
+                    txtCapacidadeCarga.setText(String.valueOf(c.getCapacidadeCarga()));
+                    txtTipoMercadoria.setText(c.getTipoMercadoria() != null ? c.getTipoMercadoria() : "");
                 }
 
-                cbTipo.getStyleClass().remove("campo-erro");
-                txtMatricula.getStyleClass().remove("campo-erro");
-                txtMarca.getStyleClass().remove("campo-erro");
-                txtModelo.getStyleClass().remove("campo-erro");
-                txtCapacidade.getStyleClass().remove("campo-erro");
-                cbProprietario.getStyleClass().remove("campo-erro");
+                btnActualizar.setDisable(false);
+                btnEliminar.setDisable(false);
                 if (lblMensagem != null) lblMensagem.setText("");
             }
+        }
+    }
+
+    @FXML
+    void filtrarTodos(ActionEvent event) {
+        filtroAtual = 0;
+        atualizarEstiloBotoesFiltro();
+        aplicarFiltroTabela();
+    }
+
+    @FXML
+    void filtrarMercadoria(ActionEvent event) {
+        filtroAtual = 1;
+        atualizarEstiloBotoesFiltro();
+        aplicarFiltroTabela();
+    }
+
+    @FXML
+    void filtrarPassageiros(ActionEvent event) {
+        filtroAtual = 2;
+        atualizarEstiloBotoesFiltro();
+        aplicarFiltroTabela();
+    }
+
+    private void atualizarEstiloBotoesFiltro() {
+        btnFiltroTodos.getStyleClass().remove("segmento-activo");
+        btnFiltroMercadoria.getStyleClass().remove("segmento-activo");
+        btnFiltroPassageiros.getStyleClass().remove("segmento-activo");
+
+        if (filtroAtual == 0) btnFiltroTodos.getStyleClass().add("segmento-activo");
+        else if (filtroAtual == 1) btnFiltroMercadoria.getStyleClass().add("segmento-activo");
+        else if (filtroAtual == 2) btnFiltroPassageiros.getStyleClass().add("segmento-activo");
+    }
+
+    private void configurarTabela() {
+        colMatricula.setCellValueFactory(v -> new SimpleStringProperty(v.getValue().getMatricula()));
+        colTipo.setCellValueFactory(v -> new SimpleStringProperty(
+                v.getValue() instanceof Carrinha ? "Passageiros" : "Mercadoria"
+        ));
+        colMarca.setCellValueFactory(v -> new SimpleStringProperty(v.getValue().getDocumentoIdentifcacao()));
+        colModelo.setCellValueFactory(v -> {
+            if (v.getValue() instanceof Carrinha) {
+                Carrinha car = (Carrinha) v.getValue();
+                return new SimpleStringProperty(car.getTipoCarroceria() != null ? car.getTipoCarroceria() : "Lotação");
+            } else {
+                Camiao cam = (Camiao) v.getValue();
+                return new SimpleStringProperty(cam.getTipoMercadoria() != null ? cam.getTipoMercadoria() : "Carga Geral");
+            }
+        });
+        colCapacidade.setCellValueFactory(v -> {
+            if (v.getValue() instanceof Carrinha) {
+                Carrinha car = (Carrinha) v.getValue();
+                int p = car.getPassageiros() != null ? car.getPassageiros() : 0;
+                return new SimpleStringProperty(p + " passageiros");
+            } else {
+                return new SimpleStringProperty(v.getValue().getCapacidadeCarga() + " toneladas");
+            }
+        });
+        colProprietario.setCellValueFactory(v -> new SimpleStringProperty(
+                v.getValue().getProprietario() != null ? v.getValue().getProprietario().getNome() : "Sem proprietário"
+        ));
+
+        tabela.setItems(dadosTabela.asObservableList());
+    }
+
+    private void aplicarFiltroTabela() {
+        dadosTabela.clear();
+        int totalCamioes = camioes != null ? camioes.getTamanho() : 0;
+        int totalCarrinhas = carrinhas != null ? carrinhas.getTamanho() : 0;
+
+        if (filtroAtual == 0 || filtroAtual == 1) {
+            if (camioes != null) {
+                for (Camiao c : camioes) {
+                    if (c != null) dadosTabela.add(c);
+                }
+            }
+        }
+        if (filtroAtual == 0 || filtroAtual == 2) {
+            if (carrinhas != null) {
+                for (Carrinha c : carrinhas) {
+                    if (c != null) dadosTabela.add(c);
+                }
+            }
+        }
+
+        if (lblTotalFrota != null) {
+            lblTotalFrota.setText("Total na frota: " + (totalCamioes + totalCarrinhas) + " (" + totalCamioes + " camiões · " + totalCarrinhas + " carrinhas)");
+        }
+        if (lblResumoTabela != null) {
+            lblResumoTabela.setText("Veículos listados: " + dadosTabela.getTamanho());
         }
     }
 }

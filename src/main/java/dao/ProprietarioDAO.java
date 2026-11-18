@@ -2,7 +2,6 @@
 package dao;
 
 import dataStructure.ListaDuplamenteLigada;
-import java.util.ArrayList;
 import java.util.List;
 import model.Proprietario;
 import org.hibernate.Session;
@@ -51,15 +50,13 @@ public class ProprietarioDAO {
         
         ListaDuplamenteLigada<Proprietario> lista = new ListaDuplamenteLigada<>();
         
-        List<Proprietario> listaAuxiliar = new ArrayList<>();
-        
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            listaAuxiliar = session.createQuery(
+            List<Proprietario> resultados = session.createQuery(
                     "FROM Proprietario ORDER BY nome",
                     Proprietario.class
             ).getResultList();
             
-            for (Proprietario p: listaAuxiliar) {
+            for (Proprietario p: resultados) {
                 lista.inserirFim(p);
             }
             
@@ -91,28 +88,23 @@ public class ProprietarioDAO {
     }
     
     public boolean remove(Proprietario p) {
-        
         Transaction transaction = null;
-        
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            
             transaction = session.beginTransaction();
-            
-            if (session.contains(p)) {
-                
-                session.remove(p);
-                
+            Proprietario entity = session.find(Proprietario.class, p.getId());
+            if (entity != null) {
+                session.remove(entity);
                 transaction.commit();
-                
                 return true;
             }
-            
+            if (transaction != null) {
+                transaction.rollback();
+            }
             return false;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             throw e;
         }
-        
     }
     
 }
