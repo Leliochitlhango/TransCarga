@@ -1,0 +1,90 @@
+
+package dao;
+
+import dataStructure.ListaDuplamenteLigada;
+import java.util.List;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import model.Camiao;
+import util.HibernateUtil;
+/**
+ *
+ * @author julius
+ */
+public class CamiaoDAO {
+    
+    public boolean save(Camiao camiao) {
+        Transaction transaction = null;
+        
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            
+            transaction = session.beginTransaction();
+            
+            session.persist(camiao);
+            
+            transaction.commit();
+            
+            return true;
+        } catch(Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        } 
+    }
+    
+    public Camiao findById(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.find(Camiao.class, id);
+        }
+    }
+    
+    public ListaDuplamenteLigada<Camiao> findAll() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<Camiao> camioes = session.createQuery(
+                    "FROM Camiao ORDER BY capacidadeCarga",
+                    Camiao.class
+            ).getResultList();
+            return ListaDuplamenteLigada.de(camioes);
+        }
+    }
+    
+    public boolean update(Camiao camiao) {
+        Transaction transaction = null;
+        
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            
+            session.merge(camiao);
+            
+            transaction.commit();
+            
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            } 
+            throw e;
+        }
+        
+    }
+    
+    public boolean remove(Camiao camiao) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            Camiao entity = session.find(Camiao.class, camiao.getId());
+            if (entity != null) {
+                session.remove(entity);
+                transaction.commit();
+                return true;
+            }
+            if (transaction != null) transaction.rollback();
+            return false;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw e;
+        }
+    }
+    
+}

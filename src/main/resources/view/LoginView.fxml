@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="720.0" prefWidth="1020.0" styleClass="janela" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginViewController">
+   <children>
+      <!-- Cartão Principal Dividido (Banner Ilustrativo de Cargas + Formulário) -->
+      <HBox alignment="CENTER" maxWidth="940.0" prefHeight="560.0" styleClass="card, login-card">
+         <children>
+            <!-- LADO ESQUERDO: BANNER ILUSTRATIVO DE LOGÍSTICA E CARGA -->
+            <VBox alignment="CENTER_LEFT" prefWidth="440.0" spacing="22.0" styleClass="login-banner">
+               <padding>
+                  <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+               </padding>
+               <children>
+                  <!-- Logotipo e Nome TransCarga -->
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <StackPane styleClass="login-logo-box">
+                           <children>
+                              <ImageView fitHeight="34.0" fitWidth="46.0" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Icones/ded851f6070fc383c2e19e79619e0004.jpg" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <VBox spacing="1.0">
+                           <children>
+                              <Label styleClass="login-brand-title" text="TransCarga" />
+                              <Label styleClass="login-brand-sub" text="MOÇAMBIQUE" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <!-- Título de Boas-vindas -->
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label styleClass="login-hero-title" text="Gestão de Frotas e Transporte de Cargas" wrapText="true" />
+                        <Label styleClass="login-hero-desc" text="Plataforma integrada para controlo de camiões, carrinhas, proprietários e pesagem de mercadorias em Moçambique." wrapText="true" />
+                     </children>
+                  </VBox>
+
+                  <!-- Destaques Operacionais do Sistema -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="login-feature-item">
+                           <children>
+                              <Region styleClass="icone, login-feature-icon, icone-camiao" />
+                              <Label styleClass="login-feature-text" text="Controlo de Frota de Camiões e Carrinhas" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="login-feature-item">
+                           <children>
+                              <Region styleClass="icone, login-feature-icon, icone-kpi-carregamentos" />
+                              <Label styleClass="login-feature-text" text="Validação e Pesagem Automática de Carga" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="login-feature-item">
+                           <children>
+                              <Region styleClass="icone, login-feature-icon, icone-consultas" />
+                              <Label styleClass="login-feature-text" text="Cobertura em todas as Províncias do País" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
+                  <Pane VBox.vgrow="ALWAYS" />
+
+                  <!-- Rodapé Esquerdo -->
+                  <Label styleClass="login-version" text="Versão 2.0 • Estrutura de Dados e Algoritmos" />
+               </children>
+            </VBox>
+
+            <!-- LADO DIREITO: FORMULÁRIO DE LOGIN -->
+            <VBox alignment="CENTER_LEFT" spacing="18.0" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets bottom="36.0" left="44.0" right="44.0" top="36.0" />
+               </padding>
+               <children>
+                  <!-- Cabeçalho do Formulário -->
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label styleClass="titulo-pagina" text="Iniciar Sessão" />
+                        <Label styleClass="subtitulo-pagina" text="Introduza as suas credenciais para aceder ao sistema" />
+                     </children>
+                  </VBox>
+
+                  <!-- Campos -->
+                  <VBox spacing="14.0">
+                     <children>
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="form-label" text="Utilizador ou E-mail" />
+                              <TextField fx:id="txtUsuario" promptText="admin ou admin@transcarga.co.mz" />
+                           </children>
+                        </VBox>
+                        
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="form-label" text="Palavra-passe" />
+                              <PasswordField fx:id="txtSenha" promptText="••••••••" />
+                           </children>
+                        </VBox>
+                        
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <CheckBox mnemonicParsing="false" text="Lembrar-me neste dispositivo" />
+                              <Pane HBox.hgrow="ALWAYS" />
+                              <Button fx:id="btnTemaLogin" mnemonicParsing="false" onAction="#alternarTemaLogin" styleClass="btn-tema-login" text="Modo Escuro" />
+                           </children>
+                        </HBox>
+
+                        <Label fx:id="lblErro" styleClass="mensagem-erro" wrapText="true" />
+                     </children>
+                  </VBox>
+
+                  <!-- Botão Entrar -->
+                  <VBox spacing="12.0">
+                     <children>
+                        <Button fx:id="btnEntrar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#entrar" styleClass="btn-primario" text="Iniciar Sessão" />
+                     </children>
+                  </VBox>
+
+                  <!-- Dica de Credenciais -->
+                  <HBox alignment="CENTER" styleClass="login-hint-box">
+                     <children>
+                        <Label styleClass="texto-pequeno, texto-suave" text="Credenciais padrão: " />
+                        <Label styleClass="texto-pequeno, login-hint-code" text="admin" />
+                        <Label styleClass="texto-pequeno, texto-suave" text=" / " />
+                        <Label styleClass="texto-pequeno, login-hint-code" text="transcarga2026" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</StackPane>

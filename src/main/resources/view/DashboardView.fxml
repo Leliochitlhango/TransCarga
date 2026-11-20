@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" styleClass="janela" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DashboardViewController">
+   <content>
+      <VBox spacing="20.0" styleClass="conteudo">
+         <children>
+            <!-- Título e Subtítulo da Página -->
+            <VBox spacing="4.0">
+               <children>
+                  <Label styleClass="titulo-pagina" text="Dashboard" />
+                  <Label styleClass="subtitulo-pagina" text="Visão geral da frota e dos serviços" />
+               </children>
+            </VBox>
+
+            <!-- Seção Superior: Veículo do Mês + Grade de KPIs -->
+            <HBox spacing="18.0">
+               <children>
+                  <!-- Card Veículo do Mês (Dinâmico) -->
+                  <VBox alignment="CENTER" prefWidth="290.0" spacing="14.0" styleClass="card">
+                     <padding>
+                        <Insets bottom="24.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="card-destaque-titulo" text="Veículo do mês" />
+                        <StackPane styleClass="kpi-icone">
+                           <children>
+                               <Region styleClass="icone, icone-trofeu, kpi-icone-svg" />
+                           </children>
+                        </StackPane>
+                        <Label fx:id="lblVeiculoMesMatricula" styleClass="veiculo-destaque-matricula" text="—" />
+                        <Label fx:id="lblVeiculoMesDetalhes" styleClass="texto-suave, texto-pequeno" text="Sem viagens registadas" textAlignment="CENTER" wrapText="true" />
+                        <Label fx:id="lblVeiculoMesReceita" styleClass="texto-verde, texto-negrito" text="0,00 MZN" />
+                     </children>
+                  </VBox>
+
+                  <!-- Grade de KPIs 2x3 -->
+                  <GridPane hgap="16.0" vgap="16.0" HBox.hgrow="ALWAYS">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="33.33" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="33.33" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="33.33" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+                        <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+                     </rowConstraints>
+                     <children>
+                        <!-- KPI 1: Veículos -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card, kpi" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                           <children>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblVeiculos" styleClass="kpi-valor" text="0" />
+                                    <Label styleClass="kpi-rotulo" text="Veículos" />
+                                    <Label fx:id="lblVeiculosRodape" styleClass="kpi-rodape" text="0 camiões · 0 carrinhas" />
+                                 </children>
+                              </VBox>
+                              <StackPane styleClass="kpi-icone">
+                                 <children>
+                                    <Region styleClass="icone, icone-kpi-veiculos, kpi-icone-svg" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+
+                        <!-- KPI 2: Proprietários -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card, kpi" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                           <children>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblProprietarios" styleClass="kpi-valor" text="0" />
+                                    <Label styleClass="kpi-rotulo" text="Proprietários" />
+                                    <Label fx:id="lblProprietariosRodape" styleClass="kpi-rodape" text="Registados no sistema" />
+                                 </children>
+                              </VBox>
+                              <StackPane styleClass="kpi-icone">
+                                 <children>
+                                    <Region styleClass="icone, icone-kpi-proprietarios, kpi-icone-svg" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+
+                        <!-- KPI 3: Clientes -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card, kpi" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                           <children>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblClientes" styleClass="kpi-valor" text="0" />
+                                    <Label styleClass="kpi-rotulo" text="Clientes" />
+                                    <Label fx:id="lblClientesRodape" styleClass="kpi-rodape" text="Activos no sistema" />
+                                 </children>
+                              </VBox>
+                              <StackPane styleClass="kpi-icone">
+                                 <children>
+                                    <Region styleClass="icone, icone-kpi-clientes, kpi-icone-svg" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+
+                        <!-- KPI 4: Carregamentos -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card, kpi" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                           <children>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblCarregamentos" styleClass="kpi-valor" text="0" />
+                                    <Label styleClass="kpi-rotulo" text="Carregamentos" />
+                                    <Label fx:id="lblCarregamentosRodape" styleClass="kpi-rodape" text="Total de viagens" />
+                                 </children>
+                              </VBox>
+                              <StackPane styleClass="kpi-icone">
+                                 <children>
+                                    <Region styleClass="icone, icone-kpi-carregamentos, kpi-icone-svg" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+
+                        <!-- KPI 5: Carga Transportada -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card, kpi" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblCargaTransportada" styleClass="kpi-valor" text="0 t" />
+                                    <Label styleClass="kpi-rotulo" text="Carga transportada" />
+                                    <Label fx:id="lblCargaRodape" styleClass="kpi-rodape" text="Volume total acumulado" />
+                                 </children>
+                              </VBox>
+                              <StackPane styleClass="kpi-icone">
+                                 <children>
+                                    <Region styleClass="icone, icone-kpi-carga, kpi-icone-svg" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+
+                        <!-- KPI 6: Arrecadado -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card, kpi" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <children>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblArrecadado" styleClass="kpi-valor" text="0,00 MZN" />
+                                    <Label styleClass="kpi-rotulo" text="Arrecadado" />
+                                    <Label fx:id="lblArrecadadoRodape" styleClass="kpi-rodape" text="Facturação total" />
+                                 </children>
+                              </VBox>
+                              <StackPane styleClass="kpi-icone">
+                                 <children>
+                                    <Region styleClass="icone, icone-kpi-receita, kpi-icone-svg" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+               </children>
+            </HBox>
+
+            <!-- Seção Inferior: Gráfico de Carregamentos + Calendário Interativo DatePicker -->
+            <HBox spacing="18.0">
+               <children>
+                  <!-- Gráfico de Carregamentos por Mês -->
+                  <VBox spacing="12.0" styleClass="card" HBox.hgrow="ALWAYS">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="card-titulo" text="Carregamentos por mês" />
+                              <Pane HBox.hgrow="ALWAYS" />
+                              <HBox alignment="CENTER" spacing="14.0">
+                                 <children>
+                                    <HBox alignment="CENTER" spacing="6.0">
+                                       <children>
+                                          <Region styleClass="legenda-camioes" />
+                                          <Label styleClass="texto-suave, texto-pequeno" text="Camiões" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" spacing="6.0">
+                                       <children>
+                                          <Region styleClass="legenda-carrinhas" />
+                                          <Label styleClass="texto-suave, texto-pequeno" text="Carrinhas" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <BarChart fx:id="graficoCarregamentos" legendVisible="false" prefHeight="260.0">
+                           <xAxis>
+                              <CategoryAxis side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis side="LEFT" />
+                           </yAxis>
+                        </BarChart>
+                     </children>
+                  </VBox>
+
+                  <!-- Calendário Interativo com DatePicker -->
+                  <VBox prefWidth="320.0" spacing="16.0" styleClass="card">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="card-titulo" text="Consultar por Data" />
+                              <Pane HBox.hgrow="ALWAYS" />
+                              <Label styleClass="texto-suave, texto-pequeno" text="Filtrar viagens" />
+                           </children>
+                        </HBox>
+                        
+                        <VBox spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label" text="Seleccionar data válida:" />
+                              <DatePicker fx:id="dpCalendario" maxWidth="1.7976931348623157E308" onAction="#filtrarPorData" promptText="Escolha uma data..." />
+                           </children>
+                        </VBox>
+
+                        <VBox spacing="10.0" styleClass="caixa-destaque-fundo">
+                           <children>
+                              <Label fx:id="lblDataSelecionada" styleClass="texto-verde, texto-negrito" text="Data seleccionada: Nenhuma" />
+                              <Label fx:id="lblResumoData" styleClass="texto-suave, texto-pequeno" text="Seleccione uma data no calendário acima para visualizar as viagens realizadas e o total transportado." wrapText="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>
